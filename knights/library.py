@@ -1,5 +1,6 @@
 from functools import partial
 
+
 class Library(dict):
 
     def register(self, filt=None, name=None):

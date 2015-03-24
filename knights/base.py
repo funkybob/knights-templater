@@ -20,7 +20,7 @@ class Template:
                                 attr='render',
                                 ctx=ast.Load()
                             ),
-                            args=[ ast.Name(id='context', ctx=ast.Load()), ],
+                            args=[ast.Name(id='context', ctx=ast.Load())],
                             keywords=[], starargs=None, kwargs=None
                         ),
                     ],

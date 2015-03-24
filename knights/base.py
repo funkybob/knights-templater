@@ -44,6 +44,8 @@ class Template:
         global_ctx = {
             'nodelist': self.nodelist,
             'context': dict(context),
+            'filters': self.parser.filters,
+            'tags': self.parser.tags,
         }
 
         return ''.join(eval(self.code, global_ctx, {}))

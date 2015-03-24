@@ -6,7 +6,7 @@ import re
 
 tag_re = re.compile(
     '|'.join([
-        r'{!\s*(?P<load>.+?)\s*!}',
+        r'{\!\s*(?P<load>.+?)\s*\!}',
         r'{%\s*(?P<tag>.+?)\s*%}',
         r'{{\s*(?P<var>.+?)\s*}}',
         r'{#\s*(?P<comment>.+?)\s*#}'
@@ -29,7 +29,7 @@ def tokenise(template):
         upto = end
         load, tag, var, comment = m.groups()
         if load is not None:
-            yield (Token.load, tag)
+            yield (Token.load, load)
         elif tag is not None:
             yield (Token.block, tag)
         elif var is not None:
@@ -61,6 +61,7 @@ class VarNode(Node):
 
         code = ast.parse(token, mode='eval')
         # XXX The magicks happen here
+        # - need to check all >> for known Filters
 
         self.code = compile(code, filename='<template>', mode='eval')
 
@@ -77,6 +78,8 @@ class Parser:
     def __init__(self, source):
         self.stream = tokenise(source)
         self.libs = []
+        self.tags = {}
+        self.filters = {}
 
     def __call__(self):
 
@@ -84,8 +87,8 @@ class Parser:
 
         for mode, token in self.stream:
             if mode == Token.load:
-                module = import_module(token)
-                self.libs.append(module.register)
+                self.load_library(token)
+                continue
             elif mode == Token.text:
                 node = TextNode(token, self)
             elif mode == Token.var:
@@ -100,3 +103,11 @@ class Parser:
             nodelist.append(node)
 
         return nodelist
+
+    def load_library(self, path):
+        '''
+        Load a template library from the python path
+        '''
+        module = import_module(path)
+        self.tags.update(module.register.tags)
+        self.filters.update(module.register.filters)

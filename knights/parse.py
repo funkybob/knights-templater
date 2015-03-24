@@ -41,7 +41,7 @@ def tokenise(template):
 
 
 class Node(object):
-    def __init__(self, token, stream):
+    def __init__(self, token, parser):
         self.token = token
         self.nodelist = []
 
@@ -55,14 +55,40 @@ class TextNode(Node):
         return self.token
 
 
+class NodeMangler(ast.NodeTransformer):
+    def __init__(self, parser):
+        super().__init__()
+        self.parser = parser
+
+    def visit_BinOp(self, node):
+        if not isinstance(node.op, ast.RShift):
+            return node
+
+        if isinstance(node.right, ast.Name) and node.right.id in self.parser.filters:
+            # Turn "foo >> bar" into "_filter[bar](foo)"
+            return ast.Call(
+                func=ast.Subscript(
+                    value=ast.Name(id='_filter', ctx=ast.Load()),
+                    slice=ast.Index(value=ast.Str(s=node.right.id)),
+                    ctx=ast.Load()
+                ),
+                args=[
+                    node.left,
+                ], keywords=[], starargs=None, kwargs=None
+            )
+
+        return node
+
+
 class VarNode(Node):
-    def __init__(self, token, stream):
-        super().__init__(token, stream)
+    def __init__(self, token, parser):
+        super().__init__(token, parser)
 
         code = ast.parse(token, mode='eval')
         # XXX The magicks happen here
-        # - need to check all >> for known Filters
+        code = NodeMangler(parser).visit(code)
 
+        ast.fix_missing_locations(code)
         self.code = compile(code, filename='<template>', mode='eval')
 
     def render(self, context):
@@ -80,6 +106,7 @@ class Parser:
         self.libs = []
         self.tags = {}
         self.filters = {}
+        self.load_library('knights.defaultfilters')
 
     def __call__(self):
 

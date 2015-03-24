@@ -14,7 +14,7 @@ class Filter:
         pass
 
 
-@library.register('title')
+@library.register(name='title')
 class TitleFilter(Filter):
     def __rshift__(self, other):
         return str(other).title()

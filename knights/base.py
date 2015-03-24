@@ -7,7 +7,8 @@ from . import parse
 class Template:
     def __init__(self, raw):
         self.raw = raw
-        self.nodelist = parse.parse(raw)
+        self.parser = parse.Parser(raw)
+        self.nodelist = self.parser()
 
         code = ast.Expression(
             body=ast.GeneratorExp(

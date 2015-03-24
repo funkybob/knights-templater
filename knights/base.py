@@ -41,11 +41,10 @@ class Template:
         self.code = compile(code, filename='<template>', mode='eval')
 
     def render(self, context):
+        ctx = dict(context, _filter=self.parser.filters, _tag=self.parser.tags)
         global_ctx = {
             'nodelist': self.nodelist,
-            'context': dict(context),
-            'filters': self.parser.filters,
-            'tags': self.parser.tags,
+            'context': ctx,
         }
 
         return ''.join(eval(self.code, global_ctx, {}))

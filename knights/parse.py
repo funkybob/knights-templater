@@ -1,6 +1,7 @@
 
 import ast
 from enum import Enum
+from importlib import import_module
 import re
 
 tag_re = re.compile(
@@ -72,25 +73,30 @@ class BlockNode(Node):
     pass
 
 
-def parse(source):
-    stream = tokenise(source)
+class Parser:
+    def __init__(self, source):
+        self.stream = tokenise(source)
+        self.libs = []
 
-    nodelist = []
+    def __call__(self):
 
-    for mode, token in stream:
-        if mode == Token.load:
-            pass
-        elif mode == Token.text:
-            node = TextNode(token, stream)
-        elif mode == Token.var:
-            node = VarNode(token, stream)
-        elif mode == Token.block:
-            # magicks go here
-            node = BlockNode(token, stream)
-        else:
-            # Must be a comment
-            continue
+        nodelist = []
 
-        nodelist.append(node)
+        for mode, token in self.stream:
+            if mode == Token.load:
+                module = import_module(token)
+                self.libs.append(module.register)
+            elif mode == Token.text:
+                node = TextNode(token, self)
+            elif mode == Token.var:
+                node = VarNode(token, self)
+            elif mode == Token.block:
+                # magicks go here
+                node = BlockNode(token, self)
+            else:
+                # Must be a comment
+                continue
 
-    return nodelist
+            nodelist.append(node)
+
+        return nodelist

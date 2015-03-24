@@ -7,10 +7,10 @@ from . import parse
 class Template:
     def __init__(self, raw):
         self.raw = raw
-        self.root = parse.parse(raw)
+        self.nodelist = parse.parse(raw)
 
         code = ast.Expression(
-            body=ast.ListComp(
+            body=ast.GeneratorExp(
                 elt=ast.Call(
                     func=ast.Name(id='str', ctx=ast.Load()),
                     args=[
@@ -20,11 +20,11 @@ class Template:
                                 attr='render',
                                 ctx=ast.Load()
                             ),
-                            args=[
-                                ast.Name(id='context', ctx=ast.Load()),
-                            ], keywords=[], starargs=None, kwargs=None
+                            args=[ ast.Name(id='context', ctx=ast.Load()), ],
+                            keywords=[], starargs=None, kwargs=None
                         ),
-                    ], keywords=[], starargs=None, kwargs=None
+                    ],
+                    keywords=[], starargs=None, kwargs=None
                 ),
                 generators=[
                     ast.comprehension(
@@ -41,7 +41,7 @@ class Template:
 
     def render(self, context):
         global_ctx = {
-            'nodelist': self.root.nodelist,
+            'nodelist': self.nodelist,
             'context': dict(context),
         }
 

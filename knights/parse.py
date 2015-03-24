@@ -73,30 +73,26 @@ class VarNode(Node):
 
 
 class BlockNode(Node):
-
-    def __init__(self, token, stream):
-        super().__init__(token, stream)
-
-        code = ast.parse(token, mode='eval')
-        assert isinstance(code.body, (ast.Tuple, ast.Name))
-
-
-TOKEN_NODE = {
-    TOKEN_TEXT: TextNode,
-    TOKEN_VAR: VarNode,
-    TOKEN_BLOCK: BlockNode,
-    TOKEN_COMMENT: Node,
-}
+    pass
 
 
 def parse(source):
     stream = tokenise(source)
 
-    root = Node('', None)
+    nodelist = []
 
     for mode, token in stream:
-        node = TOKEN_NODE[mode](token, stream)
-        if node:
-            root.nodelist.append(node)
+        if mode == TOKEN_TEXT:
+            node = TextNode(token, stream)
+        elif mode == TOKEN_VAR:
+            node = VarNode(token, stream)
+        elif mode == TOKEN_BLOCK:
+            # magicks go here
+            node = BlockNode(token, stream)
+        else:
+            # Must be a comment
+            continue
 
-    return root
+        nodelist.append(node)
+
+    return nodelist

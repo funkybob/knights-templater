@@ -1,12 +1,30 @@
 from functools import partial
 
 
-class Library(dict):
+class Library:
+    '''
+    Container for registering tags and filters
+    '''
+    def __init__(self):
+        self.tags = {}
+        self.filters = {}
 
-    def register(self, filt=None, name=None):
+    def filter(self, filt=None, name=None):
         if filt is None:
-            return partial(self.register, name=name)
+            return partial(self.filter, name=name)
 
         if name is None:
             name = filt.__name__
-        self[name] = filt
+
+        self.filters[name] = filt
+        return filt
+
+    def tag(self, func=None, name=None):
+        if func is None:
+            return partial(self.tag, name=name)
+
+        if name is None:
+            name = func.__name__
+
+        self.tags[name] = func
+        return func

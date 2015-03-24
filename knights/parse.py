@@ -1,9 +1,11 @@
 
 import ast
+from enum import Enum
 import re
 
 tag_re = re.compile(
     '|'.join([
+        r'{!\s*(?P<load>.+?)\s*!}',
         r'{%\s*(?P<tag>.+?)\s*%}',
         r'{{\s*(?P<var>.+?)\s*}}',
         r'{#\s*(?P<comment>.+?)\s*#}'
@@ -11,16 +13,8 @@ tag_re = re.compile(
     re.DOTALL
 )
 
-TOKEN_TEXT = 0
-TOKEN_VAR = 1
-TOKEN_BLOCK = 2
-TOKEN_COMMENT = 3
-TOKEN_MAPPING = {
-    TOKEN_TEXT: 'Text',
-    TOKEN_VAR: 'Var',
-    TOKEN_BLOCK: 'Block',
-    TOKEN_COMMENT: 'Comment',
-}
+
+Token = Enum('Token', 'load comment text var block',)
 
 
 def tokenise(template):
@@ -30,17 +24,19 @@ def tokenise(template):
     for m in tag_re.finditer(template):
         start, end = m.span()
         if upto < start:
-            yield (TOKEN_TEXT, template[upto:start])
+            yield (Token.text, template[upto:start])
         upto = end
-        tag, var, comment = m.groups()
-        if tag is not None:
-            yield (TOKEN_BLOCK, tag)
+        load, tag, var, comment = m.groups()
+        if load is not None:
+            yield (Token.load, tag)
+        elif tag is not None:
+            yield (Token.block, tag)
         elif var is not None:
-            yield (TOKEN_VAR, var)
+            yield (Token.var, var)
         else:
-            yield (TOKEN_COMMENT, comment)
+            yield (Token.comment, comment)
     if upto < len(template):
-        yield (TOKEN_TEXT, template[upto:])
+        yield (Token.text, template[upto:])
 
 
 class Node(object):
@@ -82,11 +78,13 @@ def parse(source):
     nodelist = []
 
     for mode, token in stream:
-        if mode == TOKEN_TEXT:
+        if mode == Token.load:
+            pass
+        elif mode == Token.text:
             node = TextNode(token, stream)
-        elif mode == TOKEN_VAR:
+        elif mode == Token.var:
             node = VarNode(token, stream)
-        elif mode == TOKEN_BLOCK:
+        elif mode == Token.block:
             # magicks go here
             node = BlockNode(token, stream)
         else:

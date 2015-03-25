@@ -77,6 +77,21 @@ class NodeMangler(ast.NodeTransformer):
                 ], keywords=[], starargs=None, kwargs=None
             )
 
+        if isinstance(node.right, ast.Call) \
+            and isinstance(node.right.func, ast.Name) \
+            and node.right.func.id in self.parser.filters:
+            # Turn "foo >> bar(baz..)" into "_filter[bar](foo, baz...)"
+            return ast.Call(
+                func=ast.Subscript(
+                    value=ast.Name(id='_filter', ctx=ast.Load()),
+                    slice=ast.Index(value=ast.Str(s=node.right.func.id)),
+                    ctx=ast.Load()
+                ),
+                args=[node.left] + node.right.args,
+                keywords=node.right.keywords,
+                starargs=node.right.starargs,
+                kwargs=node.right.kwargs,
+            )
         return node
 
 

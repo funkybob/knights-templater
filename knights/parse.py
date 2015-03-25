@@ -41,7 +41,7 @@ def tokenise(template):
 
 
 class Node(object):
-    def __init__(self, token, parser):
+    def __init__(self, parser, token):
         self.token = token
         self.nodelist = []
 
@@ -96,8 +96,8 @@ class NodeMangler(ast.NodeTransformer):
 
 
 class VarNode(Node):
-    def __init__(self, token, parser):
-        super().__init__(token, parser)
+    def __init__(self, parser, token):
+        super().__init__(parser, token)
 
         code = ast.parse(token, mode='eval')
         # XXX The magicks happen here
@@ -137,15 +137,15 @@ class Parser:
                 self.load_library(token)
                 continue
             elif mode == Token.text:
-                node = TextNode(token, self)
+                node = TextNode(self, token)
             elif mode == Token.var:
-                node = VarNode(token, self)
+                node = VarNode(self, token)
             elif mode == Token.block:
                 # magicks go here
                 bits = [x.strip() for x in token.strip().split(' ', 1)]
                 tag_name = bits.pop(0)
                 func = self.tags[tag_name]
-                node = func(bits, self)
+                node = func(self, *bits)
             else:
                 # Must be a comment
                 continue

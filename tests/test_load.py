@@ -13,5 +13,5 @@ class LoadTagTest(TemplateTestCase):
 
 class CommentTagText(TemplateTestCase):
 
-    def test_commend(self):
+    def test_comment(self):
         self.assertRendered('{# test #}', '')

@@ -160,35 +160,51 @@ class Parser:
         self.tags.update(module.register.tags)
         self.filters.update(module.register.filters)
 
-    def parse_args(self, bits):
-        '''
-        Parse tag bits as if they're function args
-        '''
-        code = ast.parse('x(%s)' % bits, mode='eval')
-        return code.body.args, code.body.keywords
 
-    def resolve_args(self, context, args, kwargs):
-        args = (
-            compile(
-                ast.fix_missing_locations(ast.Expression(body=arg)),
-                filename='<tag>',
-                mode='eval'
-            )
-            for arg in args
-        )
-        args = [eval(arg, context, {}) for arg in args]
+def parse_args(bits):
+    '''
+    Parse tag bits as if they're function args
+    '''
+    code = ast.parse('x(%s)' % bits, mode='eval')
+    return code.body.args, code.body.keywords
 
-        kwargs = compile(
-            ast.fix_missing_locations(
-                ast.Expression(
-                    body=ast.Dict(
-                        keys=[ast.Str(s=k.arg) for k in kwargs],
-                        values=[k.value for k in kwargs],
-                    )
-                ),
-            ),
+
+def resolve_args(context, args, kwargs):
+    args = (
+        compile(
+            ast.fix_missing_locations(ast.Expression(body=arg)),
             filename='<tag>',
             mode='eval'
         )
-        kwargs = eval(kwargs, context, {})
-        return args, kwargs
+        for arg in args
+    )
+    args = [eval(arg, context, {}) for arg in args]
+
+    kwargs = compile(
+        ast.fix_missing_locations(
+            ast.Expression(
+                body=ast.Dict(
+                    keys=[ast.Str(s=k.arg) for k in kwargs],
+                    values=[k.value for k in kwargs],
+                )
+            ),
+        ),
+        filename='<tag>',
+        mode='eval'
+    )
+    kwargs = eval(kwargs, context, {})
+    return args, kwargs
+
+
+class BasicNode(Node):
+    '''
+    Helper class for building common-format template tags
+    '''
+    def __init__(self, parser, token):
+        self.token = token
+        self.args, self.kwargs = parse_args(token)
+
+    def __call__(self, context):
+        args, kwargs = resolve_args(context, self.args, self.kwargs)
+        return self.render(*args, **kwargs)
+

@@ -166,3 +166,29 @@ class Parser:
         '''
         code = ast.parse('x(%s)' % bits, mode='eval')
         return code.body.args, code.body.keywords
+
+    def resolve_args(self, context, args, kwargs):
+      try:
+        args = [
+            compile(ast.fix_missing_locations(ast.Expression(body=arg)), filename='<tag>', mode='eval')
+            for arg in args
+        ]
+        args = [ eval(arg, context, {}) for arg in args ]
+
+        kwargs = compile(
+            ast.fix_missing_locations(
+                ast.Expression(
+                    body=ast.Dict(
+                        keys=[ast.Str(s=k.arg) for k in kwargs],
+                        values=[k.value for k in kwargs],
+                    )
+                ),
+            ),
+            filename='<tag>',
+            mode='eval'
+        )
+        kwargs = eval(kwargs, context, {})
+        return args, kwargs
+      except:
+        import traceback
+        traceback.print_exc()

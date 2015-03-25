@@ -45,13 +45,13 @@ class Node(object):
         self.token = token
         self.nodelist = []
 
-    def render(self, context):
+    def __call__(self, context):
         return ''
 
 
 class TextNode(Node):
 
-    def render(self, context):
+    def __call__(self, context):
         return self.token
 
 
@@ -106,9 +106,8 @@ class VarNode(Node):
         ast.fix_missing_locations(code)
         self.code = compile(code, filename='<template>', mode='eval')
 
-    def render(self, context):
-        global_ctx = dict(context)
-        return eval(self.code, global_ctx, {})
+    def __call__(self, context):
+        return eval(self.code, context, {})
 
 
 class BlockNode(Node):
@@ -122,11 +121,17 @@ class Parser:
         self.tags = {}
         self.filters = {}
         self.load_library('knights.defaultfilters')
+        self.load_library('knights.defaulttags')
 
     def __call__(self):
 
-        nodelist = []
+        nodelist = [
+            node for node in self.parse_node()
+        ]
 
+        return nodelist
+
+    def parse_node(self):
         for mode, token in self.stream:
             if mode == Token.load:
                 self.load_library(token)
@@ -137,14 +142,15 @@ class Parser:
                 node = VarNode(token, self)
             elif mode == Token.block:
                 # magicks go here
-                node = BlockNode(token, self)
+                bits = [x.strip() for x in token.strip().split(' ', 1)]
+                tag_name = bits.pop(0)
+                func = self.tags[tag_name]
+                node = func(bits, self)
             else:
                 # Must be a comment
                 continue
 
-            nodelist.append(node)
-
-        return nodelist
+            yield node
 
     def load_library(self, path):
         '''
@@ -153,3 +159,10 @@ class Parser:
         module = import_module(path)
         self.tags.update(module.register.tags)
         self.filters.update(module.register.filters)
+
+    def parse_args(self, bits):
+        '''
+        Parse tag bits as if they're function args
+        '''
+        code = ast.parse('x(%s)' % bits, mode='eval')
+        return code.body.args, code.body.keywords

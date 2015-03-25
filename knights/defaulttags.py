@@ -1,4 +1,5 @@
 from .library import Library
+from .parse import BasicNode
 
 import datetime
 
@@ -6,13 +7,7 @@ register = Library()
 
 
 @register.tag(name='now')
-def now(parser, token):
-
-    args, kwargs = parser.parse_args(token)
-
-    def _now(context):
-        a, k = parser.resolve_args(context, args, kwargs)
+class NowNode(BasicNode):
+    def render(self, fmt):
         val = datetime.datetime.now()
-        return val.strftime(a[0])
-
-    return _now
+        return val.strftime(fmt)

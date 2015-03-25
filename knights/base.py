@@ -10,17 +10,14 @@ class Template:
         self.parser = parse.Parser(raw)
         self.nodelist = self.parser()
 
+        # Equivalent to (str(x(context)) for x in nodelist)
         code = ast.Expression(
             body=ast.GeneratorExp(
                 elt=ast.Call(
                     func=ast.Name(id='str', ctx=ast.Load()),
                     args=[
                         ast.Call(
-                            func=ast.Attribute(
-                                value=ast.Name(id='x', ctx=ast.Load()),
-                                attr='render',
-                                ctx=ast.Load()
-                            ),
+                            func=ast.Name(id='x', ctx=ast.Load()),
                             args=[ast.Name(id='context', ctx=ast.Load())],
                             keywords=[], starargs=None, kwargs=None
                         ),

@@ -124,12 +124,9 @@ class Parser:
         self.load_library('knights.defaulttags')
 
     def __call__(self):
-
-        nodelist = [
+        return [
             node for node in self.parse_node()
         ]
-
-        return nodelist
 
     def parse_node(self):
         for mode, token in self.stream:
@@ -169,7 +166,7 @@ def parse_args(bits):
     return code.body.args, code.body.keywords
 
 
-def resolve_args(context, args, kwargs):
+def resolve_args(context, args):
     args = (
         compile(
             ast.fix_missing_locations(ast.Expression(body=arg)),
@@ -178,8 +175,9 @@ def resolve_args(context, args, kwargs):
         )
         for arg in args
     )
-    args = [eval(arg, context, {}) for arg in args]
+    return [eval(arg, context, {}) for arg in args]
 
+def resolve_kwargs(context, kwargs):
     kwargs = compile(
         ast.fix_missing_locations(
             ast.Expression(
@@ -192,19 +190,24 @@ def resolve_args(context, args, kwargs):
         filename='<tag>',
         mode='eval'
     )
-    kwargs = eval(kwargs, context, {})
-    return args, kwargs
+    return eval(kwargs, context, {})
 
 
 class BasicNode(Node):
     '''
     Helper class for building common-format template tags
     '''
-    def __init__(self, parser, token):
+    def __init__(self, parser, token=None):
         self.token = token
         self.args, self.kwargs = parse_args(token)
 
     def __call__(self, context):
-        args, kwargs = resolve_args(context, self.args, self.kwargs)
+        args = self.resolve_arguments(context)
+        kwargs = self.resolve_keywords(context)
         return self.render(*args, **kwargs)
 
+    def resolve_arguments(self, context):
+        return resolve_args(context, self.args)
+
+    def resolve_keywords(self, context):
+        return resolve_kwargs(context, self.kwargs)

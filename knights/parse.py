@@ -41,7 +41,7 @@ def tokenise(template):
 
 
 class Node(object):
-    def __init__(self, parser, token):
+    def __init__(self, parser, token=None):
         self.token = token
         self.nodelist = []
 

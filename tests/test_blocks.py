@@ -21,3 +21,23 @@ class ForTagTest(TemplateTestCase):
             'a == 1,b == 2,',
             {'seq': (('a', 1), ('b', 2))}
         )
+
+
+class IfTagTest(TemplateTestCase):
+    def test_simple_if(self):
+        self.assertRendered(
+            '{% if a == 1 %}Yes!{% endif %}',
+            'Yes!',
+            {'a': 1}
+        )
+
+        self.assertRendered(
+            '{% if a == 1 %}Yes!{% endif %}',
+            '',
+            {'a': 2}
+        )
+
+    def test_if_else(self):
+        tmpl = '{% if a == 1 %}Yes!{% else %}No!{% endif %}'
+        self.assertRendered(tmpl, 'Yes!', {'a': 1})
+        self.assertRendered(tmpl, 'No!', {'a': 2})

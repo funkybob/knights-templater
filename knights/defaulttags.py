@@ -41,7 +41,7 @@ class ForNode(BasicNode):
             else:
                 ctx.update(item=item)
             # Render nodelist
-            content.extend(x(ctx) for x in self.nodelist)
+            content.extend(str(x(ctx)) for x in self.nodelist)
 
         return ''.join(content)
 

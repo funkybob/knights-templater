@@ -35,10 +35,11 @@ class ForNode(BasicNode):
         content = []
         for item in iter(source):
             # Update the context
+            ctx = dict(context)
             if args:
-                ctx = dict(context, zip(args, item))
+                ctx.update(zip(args, item))
             else:
-                ctx = dict(context, item=item)
+                ctx.update(item=item)
             # Render nodelist
             content.extend(x(ctx) for x in self.nodelist)
 

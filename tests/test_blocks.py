@@ -14,3 +14,10 @@ class ForTagTest(TemplateTestCase):
             'a b c d e ',
             {'seq': 'abcde'},
         )
+
+    def test_unpack_for(self):
+        self.assertRendered(
+            '{% for a, b, _in=seq %}{{ a }} == {{ b }},{% endfor %}',
+            'a == 1,b == 2,',
+            {'seq': (('a', 1), ('b', 2))}
+        )

@@ -19,11 +19,11 @@ def stringfilter(func):
             args[0] = str(args[0])
         return func(*args, **kwargs)
 
-
     return _dec
 
 # add
 # addslashes
+
 
 @register.filter
 @stringfilter
@@ -31,6 +31,7 @@ def addslashes(value):
     return value.replace('\\', '\\\\').replace('"', '\\"').replace("'", "\\'")
 
 # capfirst
+
 
 @register.filter
 @stringfilter

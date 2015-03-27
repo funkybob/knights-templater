@@ -124,9 +124,7 @@ class Parser:
         self.load_library('knights.defaulttags')
 
     def __call__(self):
-        return [
-            node for node in self.parse_node()
-        ]
+        return list(self.parse_node())
 
     def parse_node(self):
         for mode, token in self.stream:

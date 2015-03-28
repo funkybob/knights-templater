@@ -10,7 +10,6 @@ def kompile(src):
 
     class Template(object):
         def __call__(self, context):
-            self.context = context
             return ''.join(str(x) for x in self._root(context))
 
         def _root(self, context):
@@ -45,16 +44,6 @@ def kompile(src):
             kw_defaults=[],
         ),
         body=[
-            ast.Assign(
-                targets=[
-                    ast.Attribute(
-                        value=ast.Name(id='self', ctx=ast.Load()),
-                        attr='context',
-                        ctx=ast.Store()
-                    ),
-                ],
-                value=ast.Name(id='context', ctx=ast.Load()),
-            ),
             ast.Return(
                 value=ast.Call(
                     func=ast.Attribute(

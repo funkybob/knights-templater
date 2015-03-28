@@ -18,6 +18,7 @@ register = Library()
 # firstof
 # for
 
+
 @register.tag(name='for')
 class ForNode(BasicNode):
     def __init__(self, parser, token):
@@ -27,7 +28,7 @@ class ForNode(BasicNode):
         for node in parser.parse_node():
             if isinstance(node, EndForNode):
                 break
-            self.nodelist.append(node)
+            nodelist.append(node)
 
     def __call__(self, context):
         args = [arg.id for arg in self.args]
@@ -47,12 +48,14 @@ class ForNode(BasicNode):
 
         return ''.join(content)
 
+
 @register.tag(name='endfor')
 class EndForNode(Node):
     pass
 
 # for ... empty
 # if
+
 
 @register.tag(name='if')
 class IfNode(Node):
@@ -86,9 +89,11 @@ class IfNode(Node):
 
         return ''.join(str(x(context)) for x in nodelist)
 
+
 @register.tag(name='endif')
 class EndIfNode(Node):
     pass
+
 
 @register.tag(name='else')
 class ElseNode(Node):
@@ -100,6 +105,7 @@ class ElseNode(Node):
 # include
 # load
 # now
+
 
 @register.tag(name='now')
 class NowNode(BasicNode):

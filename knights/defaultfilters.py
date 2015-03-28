@@ -71,6 +71,7 @@ ESCAPES = {
     'js': lambda text: text.translate(_js_escapes)
 }
 
+
 @register.filter
 @stringfilter
 def escape(value, mode='html'):

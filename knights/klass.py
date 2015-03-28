@@ -118,7 +118,7 @@ def kompile(src):
     return g['Template']
 
 
-def build_method(state, name):
+def build_method(state, name, endnode=None):
 
     # Define the body of the function
     body = [
@@ -146,7 +146,7 @@ def build_method(state, name):
 
     # Parse Nodes
     # They need the parser, and state
-    body.extend(parse_node(state))
+    body.extend(parse_node(state, endnode))
 
     return func
 
@@ -160,7 +160,7 @@ class VarVisitor(ast.NodeTransformer):
         )
 
 
-def parse_node(state):
+def parse_node(state, endnode=None):
     for mode, token in state['stream']:
         if mode == Token.load:
             load_library(state, token)
@@ -172,9 +172,10 @@ def parse_node(state):
             VarVisitor().visit(code)
             node = ast.Yield(value=code.body)
         elif mode == Token.block:
-            #
             bits = token.strip().split(' ', 1)
             tag_name = bits.pop(0).strip()
+            if tag_name == endnode:
+                return
             func = state['tags'][tag_name]
             node = func(state, *bits)
         else:

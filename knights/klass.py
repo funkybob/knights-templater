@@ -10,7 +10,7 @@ def kompile(src):
     class Template(object):
         def __call__(self, context):
             self.context = context
-            yield from self._root(context)
+            return ''.join(str(x) for x in self._root(context))
 
         def _root(self, context):
             yield ''

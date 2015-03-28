@@ -82,7 +82,6 @@ class BlockNode(Node):
 class Parser:
     def __init__(self, source):
         self.stream = tokenise(source)
-        self.libs = []
         self.tags = {}
         self.filters = {}
         self.load_library('knights.defaultfilters')

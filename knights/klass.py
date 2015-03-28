@@ -1,11 +1,12 @@
 import ast
+from importlib import import_module
 
 from .lexer import Token, tokenise
 
 
 def kompile(src):
     '''
-    Defines a new class based on template tags, and returns an instance of it.
+    Creates a new class based on the supplied template, and returnsit.
 
     class Template(object):
         def __call__(self, context):
@@ -15,6 +16,7 @@ def kompile(src):
         def _root(self, context):
             yield ''
             yield ...
+            yield from self.head(context)
 
     Blocks create new methods, and add a 'yield from self.{block}(context)' to
     the current function
@@ -25,6 +27,7 @@ def kompile(src):
         'bases': ['object'],
         'methods': [],
         'stream': tokenise(src),
+        'tags': {},
     }
 
     # Define the __call__ method
@@ -111,31 +114,19 @@ def kompile(src):
         decorator_list=[]
     )
 
-    inst = ast.Module(body=[
-        klass,
-        ast.Global(names=['inst']),
-        ast.Assign(
-            targets=[ast.Name(id='inst', ctx=ast.Store())],
-            value=ast.Call(
-                func=ast.Name(id='Template', ctx=ast.Load()),
-                args=[],
-                keywords=[],
-                starargs=None,
-                kwargs=None
-            ),
-        )
-    ])
+    # Wrap it in a module
+    inst = ast.Module(body=[klass])
 
-    # Compile instanciating the klass
     ast.fix_missing_locations(inst)
 
+    # Compile code to create class
     code = compile(inst, filename='<compiler>', mode='exec')
 
     # Execute it and return the instance
     g = {}
     eval(code, g)
 
-    return g['inst']
+    return g['Template']
 
 
 def build_method(state, name):
@@ -166,8 +157,7 @@ def build_method(state, name):
 
     # Parse Nodes
     # They need the parser, and state
-    for node in parse_node(state):
-        body.append(node)
+    body.extend(parse_node(state))
 
     return func
 
@@ -175,11 +165,7 @@ def build_method(state, name):
 class VarVisitor(ast.NodeTransformer):
     def visit_Name(self, node):
         return ast.Subscript(
-            value=ast.Attribute(
-                value=ast.Name(id='self', ctx=ast.Load()),
-                attr='context',
-                ctx=ast.Load()
-            ),
+            value=ast.Name(id='context', ctx=ast.Load()),
             slice=ast.Index(value=ast.Str(s=node.id)),
             ctx=ast.Load(),
         )
@@ -209,8 +195,9 @@ def parse_node(state):
         yield ast.Expr(value=node)
 
 
-def load_library(state, token):
+def load_library(state, path):
     '''
     Load a template library into the state.
     '''
-    pass
+    module = import_module(path)
+    state['tags'].update(module.register.tags)

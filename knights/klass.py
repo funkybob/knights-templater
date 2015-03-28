@@ -52,21 +52,43 @@ def kompile(src):
                 ],
                 value=ast.Name(id='context', ctx=ast.Load()),
             ),
-            ast.Expr(value=ast.YieldFrom(
+            ast.Return(
                 value=ast.Call(
                     func=ast.Attribute(
-                        value=ast.Name(id='self', ctx=ast.Load()),
-                        attr='_root',
+                        value=ast.Str(s=''),
+                        attr='join',
                         ctx=ast.Load()
                     ),
                     args=[
-                        ast.Name(id='context', ctx=ast.Load())
+                        ast.GeneratorExp(
+                            elt=ast.Call(
+                                func=ast.Name(id='str', ctx=ast.Load()),
+                                args=[
+                                    ast.Name(id='x', ctx=ast.Load()),
+                                ],
+                                keywords=[], starargs=None, kwargs=None
+                            ),
+                            generators=[
+                                ast.comprehension(
+                                    target=ast.Name(id='x', ctx=ast.Store()),
+                                    iter=ast.Call(
+                                        func=ast.Attribute(
+                                            value=ast.Name(id='self', ctx=ast.Load()),
+                                            attr='_root',
+                                            ctx=ast.Load()
+                                        ),
+                                        args=[
+                                            ast.Name(id='context', ctx=ast.Load()),
+                                        ], keywords=[], starargs=None, kwargs=None
+                                    ),
+                                    ifs=[]
+                                ),
+                            ]
+                        ),
                     ],
-                    keywords=[],
-                    starargs=None,
-                    kwargs=None,
+                    keywords=[], starargs=None, kwargs=None
                 )
-            )),
+            ),
         ],
         decorator_list=[],
     )
@@ -150,6 +172,19 @@ def build_method(state, name):
     return func
 
 
+class VarVisitor(ast.NodeTransformer):
+    def visit_Name(self, node):
+        return ast.Subscript(
+            value=ast.Attribute(
+                value=ast.Name(id='self', ctx=ast.Load()),
+                attr='context',
+                ctx=ast.Load()
+            ),
+            slice=ast.Index(value=ast.Str(s=node.id)),
+            ctx=ast.Load(),
+        )
+
+
 def parse_node(state):
     for mode, token in state['stream']:
         if mode == Token.load:
@@ -159,6 +194,7 @@ def parse_node(state):
             node = ast.Yield(value=ast.Str(s=token))
         elif mode == Token.var:
             code = ast.parse(token, mode='eval')
+            VarVisitor().visit(code)
             node = ast.Yield(value=code.body)
         elif mode == Token.block:
             #

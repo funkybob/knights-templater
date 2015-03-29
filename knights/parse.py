@@ -2,7 +2,7 @@
 import ast
 from importlib import import_module
 
-from .lexer import tokenise, Token
+from .lexer import tokenise, TokenType
 
 
 class Node(object):
@@ -91,17 +91,17 @@ class Parser:
         return list(self.parse_node())
 
     def parse_node(self):
-        for mode, token in self.stream:
-            if mode == Token.load:
-                self.load_library(token)
+        for token in self.stream:
+            if token.mode == TokenType.load:
+                self.load_library(token.token)
                 continue
-            elif mode == Token.text:
-                node = TextNode(self, token)
-            elif mode == Token.var:
-                node = VarNode(self, token)
-            elif mode == Token.block:
+            elif token.mode == TokenType.text:
+                node = TextNode(self, token.token)
+            elif token.mode == TokenType.var:
+                node = VarNode(self, token.token)
+            elif token.mode == TokenType.block:
                 # magicks go here
-                bits = [x.strip() for x in token.strip().split(' ', 1)]
+                bits = [x.strip() for x in token.token.strip().split(' ', 1)]
                 tag_name = bits.pop(0)
                 func = self.tags[tag_name]
                 node = func(self, *bits)

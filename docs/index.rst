@@ -59,10 +59,14 @@ Var:
 Comment:
     Comment
 
+------
 Parser
 ------
 
 There are currently two parser in use.
+
+Parser 1
+--------
 
 The original parser currently functions well enough to produce templates with
 var nodes and block nodes, including IF and FOR block node implementations. It
@@ -127,6 +131,9 @@ Since the parse_node method is a generator, block nodes can call it to build
 child nodelists.
 
 
+Parser 2
+--------
+
 The second parser was born from a desire to implement template inheritance.
 
 The obvious solution to implementing overridable blocks in the template was to
@@ -143,38 +150,32 @@ accessing ``super()``.
 So far I've got ``klass.kompile`` which will construct AST for a class, compile
 it, then return an instance of it.
 
-First, it creates a ``state`` dict containing a list of base classes (just
-'object' by default), a list of methods, and the token stream.
+First it creates a Parser instance, which holds the token stream, a list of
+base classes (just 'object' by default), a list of methods, and a map of tags
+loaded.
 
 Then it builds a ``__call__`` method in AST.  This method is effectively:
 
 .. code-block:: python
 
    def __call__(self, context):
-       self.context = context
        return ''.join(str(x) for x in self._root(context))
 
-Next it uses the ``build_method`` helper function to define ``_root``, the main
+Next it uses the ``parser.build_method`` method to define ``_root``, the main
 block container method.
 
-It then defines a Class with the bases and methods in ``state``, then builds, compiles and executes AST to affect:
+Then it uses ``parser.build_class`` to build AST for defining the class, wraps
+it in a Module, and compiles it.
 
-.. code-block:: python
+Finally it returns the class created.  An instance of which is a callable which
+will accept a dict as context, and return the rendered template.
 
-   class Template( ... )
-       ...
+The ``parser.build_method`` function accepts a name for the method, and
+optionally a list of end tokens.  It creates a method in AST, then iterates
+``parser.parse_node(endnodes)`` for all it can get, appending the results to
+the body of the method.
 
-   global inst
-   inst = Template()
-
-Finally it returns the instance created, a callable which will accept a dict as
-context, and return the rendered template.
-
-The ``build_method`` function accepts the state and a name for the method.  It
-creates a method in AST, then iterates parse_node(state) for all it can get,
-appending the results to the body of the method.
-
-In ``parse_node``, the token stream is iterated.
+In ``parser.parse_node``, the token stream is iterated.
 
 Load tags will cause a library load [currently unimplemented].
 
@@ -187,8 +188,9 @@ changes all Name nodes to become context lookups.
 
    It will likely break non-trivial expressions.
 
-As yet block nodes are not implemented, but will be able to recursively call
-``parse_node`` and ``build_method`` as needed.
+The `{% block name %}` tag is implemented and functioning correctly.
+
+A simple `{% if _expr_ %}` tag has been implemented, also.
 
 Indices and tables
 ==================

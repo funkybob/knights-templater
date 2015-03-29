@@ -25,6 +25,7 @@ class Token:
 def tokenise(template):
     '''A generator which yields Token instances'''
     upto = 0
+    lineno = 0
     # XXX Track line numbers and update nodes, so we can annotate the code
     for m in tag_re.finditer(template):
         start, end = m.span()

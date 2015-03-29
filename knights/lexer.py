@@ -32,7 +32,7 @@ def tokenise(template):
         if upto < start:
             yield Token(TokenType.text, template[upto:start], lineno)
         upto = end
-        load, tag, var, comment = m.groups()
+        tag, var, comment = m.groups()
         if tag is not None:
             yield Token(TokenType.block, tag, lineno)
         elif var is not None:

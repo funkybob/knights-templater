@@ -1,7 +1,8 @@
 from enum import Enum
 import re
 
-Token = Enum('Token', 'load comment text var block',)
+TokenType = Enum('Token', 'load comment text var block',)
+
 
 tag_re = re.compile(
     '|'.join([
@@ -14,23 +15,31 @@ tag_re = re.compile(
 )
 
 
+class Token:
+    def __init__(self, mode, token, lineno=None):
+        self.mode = mode
+        self.token = token
+        self.lineno = lineno
+
+
 def tokenise(template):
-    '''A generator which yields (type, content) pairs'''
+    '''A generator which yields Token instances'''
     upto = 0
     # XXX Track line numbers and update nodes, so we can annotate the code
     for m in tag_re.finditer(template):
         start, end = m.span()
+        lineno = template.count('\n', 0, start)
         if upto < start:
-            yield (Token.text, template[upto:start])
+            yield Token(TokenType.text, template[upto:start], lineno)
         upto = end
         load, tag, var, comment = m.groups()
         if load is not None:
-            yield (Token.load, load)
+            yield Token(TokenType.load, load, lineno)
         elif tag is not None:
-            yield (Token.block, tag)
+            yield Token(TokenType.block, tag, lineno)
         elif var is not None:
-            yield (Token.var, var)
+            yield Token(TokenType.var, var, lineno)
         else:
-            yield (Token.comment, comment)
+            yield Token(TokenType.comment, comment, lineno)
     if upto < len(template):
-        yield (Token.text, template[upto:])
+        yield Token(TokenType.text, template[upto:], lineno)

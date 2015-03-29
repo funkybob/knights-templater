@@ -1,25 +1,15 @@
 
 import ast
 
-from .klass import build_method
 from .library import Library
 
 register = Library()
 
 
-def parse_args(bits):
-    '''
-    Parse tag bits as if they're function args
-    '''
-    code = ast.parse('x(%s)' % bits, mode='eval')
-    return code.body.args, code.body.keywords
-
-
 @register.tag(name='block')
-def block(state, token):
+def block(parser, token):
     token = token.strip()
-    func = build_method(state, token, endnode='endblock')
-    state['methods'].append(func)
+    parser.build_method(token, endnodes=['endblock'])
     return ast.YieldFrom(
         value=ast.Call(
             func=ast.Attribute(
@@ -33,3 +23,17 @@ def block(state, token):
             keywords=[], starargs=None, kwargs=None
         )
     )
+
+
+@register.tag(name='if')
+def do_if(parser, token):
+    code = ast.parse(token, mode='eval')
+
+    nodelist = list(parser.parse_node(['endif']))
+
+    return ast.IfExp(test=code.body, body=nodelist)
+
+
+@register.tag(name='else')
+def do_else(parser, token=None):
+    return ast.Yield(value=ast.Str(s=''))

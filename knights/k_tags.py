@@ -10,7 +10,7 @@ register = Library()
 def block(parser, token):
     token = token.strip()
     parser.build_method(token, endnodes=['endblock'])
-    return ast.YieldFrom(
+    return ast.Expr(value=ast.YieldFrom(
         value=ast.Call(
             func=ast.Attribute(
                 value=ast.Name(id='self', ctx=ast.Load()),
@@ -22,7 +22,7 @@ def block(parser, token):
             ],
             keywords=[], starargs=None, kwargs=None
         )
-    )
+    ))
 
 
 @register.tag(name='if')
@@ -31,9 +31,9 @@ def do_if(parser, token):
 
     nodelist = list(parser.parse_node(['endif']))
 
-    return ast.IfExp(test=code.body, body=nodelist)
+    return ast.If(test=code.body, body=nodelist)
 
 
 @register.tag(name='else')
 def do_else(parser, token=None):
-    return ast.Yield(value=ast.Str(s=''))
+    return ast.Expr(value=ast.Yield(value=ast.Str(s='')))

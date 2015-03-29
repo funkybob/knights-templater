@@ -2,6 +2,7 @@
 import ast
 
 from .library import Library
+from .klass import VarVisitor
 
 register = Library()
 
@@ -29,9 +30,11 @@ def block(parser, token):
 def do_if(parser, token):
     code = ast.parse(token, mode='eval')
 
+    VarVisitor().visit(code)
+
     nodelist = list(parser.parse_node(['endif']))
 
-    return ast.If(test=code.body, body=nodelist)
+    return ast.If(test=code.body, body=nodelist, orelse=[])
 
 
 @register.tag(name='else')

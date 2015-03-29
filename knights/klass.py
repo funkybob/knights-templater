@@ -76,7 +76,7 @@ class Parser:
                 if endnodes and tag_name in endnodes:
                     return token
                 func = self.tags[tag_name]
-                node = func(self, *bits)
+                return func(self, *bits)
             else:
                 # Must be a comment
                 continue

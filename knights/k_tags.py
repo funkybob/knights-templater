@@ -8,21 +8,19 @@ register = Library()
 
 @register.tag(name='block')
 def block(parser, token):
-    token = token.strip()
-    parser.build_method(token, endnodes=['endblock'])
-    return ast.Expr(
-        value=ast.YieldFrom(
-            value=ast.Call(
-                func=ast.Attribute(
-                    value=ast.Name(id='self', ctx=ast.Load()),
-                    attr=token,
-                    ctx=ast.Load()
-                ),
-                args=[
-                    ast.Name(id='context', ctx=ast.Load()),
-                ],
-                keywords=[], starargs=None, kwargs=None
-            )
+    name = token.strip()
+    parser.build_method(name, endnodes=['endblock'])
+    return ast.YieldFrom(
+        value=ast.Call(
+            func=ast.Attribute(
+                value=ast.Name(id='self', ctx=ast.Load()),
+                attr=name,
+                ctx=ast.Load()
+            ),
+            args=[
+                ast.Name(id='context', ctx=ast.Load()),
+            ],
+            keywords=[], starargs=None, kwargs=None
         )
     )
 
@@ -38,4 +36,4 @@ def do_if(parser, token):
 
 @register.tag(name='else')
 def do_else(parser, token=None):
-    return ast.Expr(value=ast.Yield(value=ast.Str(s='')))
+    return ast.Yield(value=ast.Str(s=''))

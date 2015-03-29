@@ -74,14 +74,16 @@ class Parser:
                 bits = token.token.strip().split(' ', 1)
                 tag_name = bits.pop(0).strip()
                 if endnodes and tag_name in endnodes:
-                    return token
+                    return
                 func = self.tags[tag_name]
-                return func(self, *bits)
+                node =func(self, *bits)
             else:
                 # Must be a comment
                 continue
 
-            yield ast.Expr(value=node, lineno=token.lineno)
+            if isinstance(node, (ast.Yield, ast.YieldFrom)):
+                node = ast.Expr(value=node, lineno=token.lineno)
+            yield node
 
     def build_class(self):
         return ast.ClassDef(

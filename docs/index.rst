@@ -59,12 +59,12 @@ Var:
 Comment:
     Comment
 
-------
-Parser
-------
+Parsers
+-------
 
 There are currently two parser in use.
 
+--------
 Parser 1
 --------
 
@@ -131,6 +131,7 @@ Since the parse_node method is a generator, block nodes can call it to build
 child nodelists.
 
 
+--------
 Parser 2
 --------
 

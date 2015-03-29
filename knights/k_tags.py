@@ -6,6 +6,10 @@ from .klass import VarVisitor
 
 register = Library()
 
+@register.tag(name='load')
+def load(parser, token):
+    parser.load_library(token)
+
 
 @register.tag(name='block')
 def block(parser, token):

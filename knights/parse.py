@@ -92,10 +92,7 @@ class Parser:
 
     def parse_node(self):
         for token in self.stream:
-            if token.mode == TokenType.load:
-                self.load_library(token.token)
-                continue
-            elif token.mode == TokenType.text:
+            if token.mode == TokenType.text:
                 node = TextNode(self, token.token)
             elif token.mode == TokenType.var:
                 node = VarNode(self, token.token)

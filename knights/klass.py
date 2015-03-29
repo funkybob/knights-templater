@@ -61,10 +61,7 @@ class Parser:
 
     def parse_node(self, endnodes=None):
         for token in self.stream:
-            if token.mode == TokenType.load:
-                self.load_library(token.token)
-                continue
-            elif token.mode == TokenType.text:
+            if token.mode == TokenType.text:
                 node = ast.Yield(value=ast.Str(s=token.token))
             elif token.mode == TokenType.var:
                 code = ast.parse(token.token, mode='eval')
@@ -81,6 +78,8 @@ class Parser:
                 # Must be a comment
                 continue
 
+            if node is None:
+                continue
             if isinstance(node, (ast.Yield, ast.YieldFrom)):
                 node = ast.Expr(value=node, lineno=token.lineno)
             yield node

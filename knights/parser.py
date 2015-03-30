@@ -105,3 +105,8 @@ class Parser:
         code = ast.parse(expr, mode='eval')
         VarVisitor().visit(code)
         return code.body
+
+    def parse_args(self, expr):
+        code = ast.parse('x(%s)' % expr, mode='eval')
+
+        return code.body.args, code.body.keywords

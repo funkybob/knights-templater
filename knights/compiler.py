@@ -23,6 +23,7 @@ def kompile(src):
 
     parser = Parser(src)
     parser.load_library('knights.tags')
+    parser.load_library('knights.helpers')
 
     # Define the __call__ method
     func = ast.FunctionDef(
@@ -94,7 +95,7 @@ def kompile(src):
     code = compile(inst, filename='<compiler>', mode='exec')
 
     # Execute it and return the instance
-    g = {}
+    g = {'helpers': parser.helpers}
     eval(code, g)
 
     return g['Template']

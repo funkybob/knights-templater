@@ -6,6 +6,8 @@ from .lexer import TokenType, tokenise
 
 class VarVisitor(ast.NodeTransformer):
     def visit_Name(self, node):
+        if node.id == 'helpers':
+            return node
         return ast.Subscript(
             value=ast.Name(id='context', ctx=ast.Load()),
             slice=ast.Index(value=ast.Str(s=node.id)),
@@ -19,6 +21,7 @@ class Parser:
         self.bases = ['object']
         self.methods = []
         self.tags = {}
+        self.helpers = {}
 
     def load_library(self, path):
         '''
@@ -26,6 +29,7 @@ class Parser:
         '''
         module = import_module(path)
         self.tags.update(module.register.tags)
+        self.helpers.update(module.register.helpers)
 
     def build_method(self, name, endnodes=None):
 

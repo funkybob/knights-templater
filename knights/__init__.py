@@ -1,1 +1,1 @@
-from .base import Template  # NOQA
+from .compiler import kompile  # NOQA

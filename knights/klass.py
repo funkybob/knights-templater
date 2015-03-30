@@ -64,16 +64,15 @@ class Parser:
             if token.mode == TokenType.text:
                 node = ast.Yield(value=ast.Str(s=token.token))
             elif token.mode == TokenType.var:
-                code = ast.parse(token.token, mode='eval')
-                VarVisitor().visit(code)
-                node = ast.Yield(value=code.body)
+                code = self.parse_expression(token.token)
+                node = ast.Yield(value=code)
             elif token.mode == TokenType.block:
                 bits = token.token.strip().split(' ', 1)
                 tag_name = bits.pop(0).strip()
                 if endnodes and tag_name in endnodes:
                     return
                 func = self.tags[tag_name]
-                node =func(self, *bits)
+                node = func(self, *bits)
             else:
                 # Must be a comment
                 continue
@@ -97,6 +96,11 @@ class Parser:
             kwargs=None,
             decorator_list=[]
         )
+
+    def parse_expression(self, expr):
+        code = ast.parse(expr, mode='eval')
+        VarVisitor().visit(code)
+        return code.body
 
 
 def kompile(src):

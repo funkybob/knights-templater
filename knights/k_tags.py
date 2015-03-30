@@ -2,9 +2,9 @@
 import ast
 
 from .library import Library
-from .klass import VarVisitor
 
 register = Library()
+
 
 @register.tag(name='load')
 def load(parser, token):
@@ -32,13 +32,11 @@ def block(parser, token):
 
 @register.tag(name='if')
 def do_if(parser, token):
-    code = ast.parse(token, mode='eval')
-
-    VarVisitor().visit(code)
+    code = parser.parse_expression(token)
 
     nodelist = list(parser.parse_node(['endif']))
 
-    return ast.If(test=code.body, body=nodelist, orelse=[])
+    return ast.If(test=code, body=nodelist, orelse=[])
 
 
 @register.tag(name='else')

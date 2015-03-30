@@ -1,6 +1,6 @@
 import unittest
 
-from knights import Template
+from knights import compiler
 
 class Mock(object):
     def __init__(self, **kwargs):
@@ -12,8 +12,8 @@ class TemplateTestCase(unittest.TestCase):
 
     def assertRendered(self, source, expected, context=None):
         try:
-            tmpl = Template(source)
-            rendered = tmpl.render({} if context is None else context)
+            tmpl = compiler.kompile(source)
+            rendered = tmpl()({} if context is None else context)
             self.assertEqual(rendered, expected)
         except Exception as e:
             if hasattr(e, 'message'):

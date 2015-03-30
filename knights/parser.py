@@ -4,15 +4,19 @@ from importlib import import_module
 from .lexer import TokenType, tokenise
 
 
+def wrap_name_in_context(name):
+    return ast.Subscript(
+        value=ast.Name(id='context', ctx=ast.Load()),
+        slice=ast.Index(value=ast.Str(s=name.id)),
+        ctx=ast.Load(),
+    )
+
+
 class VarVisitor(ast.NodeTransformer):
     def visit_Name(self, node):
         if node.id == 'helpers':
             return node
-        return ast.Subscript(
-            value=ast.Name(id='context', ctx=ast.Load()),
-            slice=ast.Index(value=ast.Str(s=node.id)),
-            ctx=ast.Load(),
-        )
+        return wrap_name_in_context(node)
 
 
 class Parser:

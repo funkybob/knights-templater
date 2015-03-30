@@ -22,7 +22,7 @@ def kompile(src):
     '''
 
     parser = Parser(src)
-    parser.load_library('knights.k_tags')
+    parser.load_library('knights.tags')
 
     # Define the __call__ method
     func = ast.FunctionDef(

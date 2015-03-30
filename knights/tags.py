@@ -1,6 +1,7 @@
 
 import ast
 
+from .parser import VarVisitor
 from .library import Library
 
 register = Library()
@@ -42,3 +43,30 @@ def do_if(parser, token):
 @register.tag(name='else')
 def do_else(parser, token=None):
     return ast.Yield(value=ast.Str(s=''))
+
+
+@register.tag(name='for')
+def do_for(parser, token):
+    '''
+    {% for a, b, c, _in=iterable %}
+
+    {% endfor %}
+    '''
+    args, kwargs = parser.parse_args(token)
+
+    src = None
+    for kw in kwargs:
+        print(kw.arg, kw.value)
+        if kw.arg == '_in':
+            src = kw.value
+            break
+        raise ValueError('Only _in accepted as keyword in for tag.')
+
+    for arg in args:
+        VarVisitor().visit(arg)
+
+    VarVisitor().visit(src)
+
+    nodelist = list(parser.parse_node(['endfor']))
+
+    return ast.For(target=args, iter=src, body=nodelist, orelse=[])

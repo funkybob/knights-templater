@@ -51,13 +51,49 @@ def do_for(parser, token):
     {% for a, b, c in iterable %}
 
     {% endfor %}
+
+    We create the structure:
+
+    for a, b, c in iterable:
+        with helpers['forwrapper'](context, a=a, b=b, c=c):
+            ...
     '''
     code = ast.parse('for %s: pass' % token, mode='exec')
 
     loop = code.body[0]
     loop.iter = wrap_name_in_context(loop.iter)
-    loop.body = list(parser.parse_node(['endfor']))
+    body = list(parser.parse_node(['endfor']))
+
+    if isinstance(loop.target, ast.Tuple):
+        targets = [elt.id for elt in loop.target.elts]
+    else:
+        targets = [loop.target.id]
 
     # Need to inject the loop values back into the context
+    inner = ast.With(
+        items=[
+            ast.withitem(
+                context_expr=ast.Call(
+                    func=ast.Subscript(
+                        value=ast.Name(id='helpers', ctx=ast.Load()),
+                        slice=ast.Index(value=ast.Str(s='forwrapper')),
+                        ctx=ast.Load()
+                    ),
+                    args=[
+                        ast.Name(id='context', ctx=ast.Load()),
+                    ],
+                    keywords=[
+                        ast.keyword(arg=elt, value=ast.Name(id=elt, ctx=ast.Load()))
+                        for elt in targets
+                    ],
+                    starargs=None, kwargs=None
+                ),
+                optional_vars=ast.Name(id='context', ctx=ast.Store())
+            ),
+        ],
+        body=body,
+    )
+
+    loop.body = [inner]
 
     return loop

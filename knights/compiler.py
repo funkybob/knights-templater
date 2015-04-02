@@ -3,7 +3,7 @@ import ast
 from .parser import Parser
 
 
-def kompile(src):
+def kompile(src, debug=False):
     '''
     Creates a new class based on the supplied template, and returnsit.
 
@@ -91,6 +91,9 @@ def kompile(src):
 
     ast.fix_missing_locations(inst)
 
+    if debug:
+        import astpp
+        print(astpp.dump(inst))
     # Compile code to create class
     code = compile(inst, filename='<compiler>', mode='exec')
 

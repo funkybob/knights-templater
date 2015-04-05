@@ -3,11 +3,10 @@ from functools import partial
 
 class Library:
     '''
-    Container for registering tags and filters
+    Container for registering tags and helpers
     '''
     def __init__(self):
         self.tags = {}
-        self.filters = {}
         self.helpers = {}
 
     def tag(self, func=None, name=None):

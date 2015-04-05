@@ -10,16 +10,6 @@ class Library:
         self.filters = {}
         self.helpers = {}
 
-    def filter(self, filt=None, name=None):
-        if filt is None:
-            return partial(self.filter, name=name)
-
-        if name is None:
-            name = filt.__name__
-
-        self.filters[name] = filt
-        return filt
-
     def tag(self, func=None, name=None):
         if func is None:
             return partial(self.tag, name=name)

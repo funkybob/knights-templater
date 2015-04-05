@@ -12,6 +12,13 @@ def load(parser, token):
     parser.load_library(token)
 
 
+@register.tag(name='extends')
+def extends(parser, token):
+    from .loader import load_template
+    parent = load_template(token)
+    parser.parent = parent
+
+
 @register.tag(name='block')
 def block(parser, token):
     name = token.strip()

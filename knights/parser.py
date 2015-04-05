@@ -22,7 +22,8 @@ class VarVisitor(ast.NodeTransformer):
 class Parser:
     def __init__(self, src):
         self.stream = tokenise(src)
-        self.bases = ['object']
+        self.base = 'object'
+        self.parent = None
         self.methods = []
         self.tags = {}
         self.helpers = {}
@@ -95,8 +96,7 @@ class Parser:
         return ast.ClassDef(
             name='Template',
             bases=[
-                ast.Name(id=base, ctx=ast.Load())
-                for base in reversed(self.bases)
+                ast.Name(id='parent' if self.parent else 'object', ctx=ast.Load())
             ],
             body=self.methods,
             keywords=[],

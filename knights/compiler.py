@@ -84,6 +84,11 @@ def kompile(src, debug=False):
     parser.methods.append(func)
     parser.build_method('_root')
 
+    if parser.parent:
+        # Remove _root from the method list
+        parser.methods = [
+            method for method in parser.methods if method.name != '_root'
+        ]
     klass = parser.build_class()
 
     # Wrap it in a module
@@ -98,7 +103,10 @@ def kompile(src, debug=False):
     code = compile(inst, filename='<compiler>', mode='exec')
 
     # Execute it and return the instance
-    g = {'helpers': parser.helpers}
+    g = {
+        'helpers': parser.helpers,
+        'parent': parser.parent,
+    }
     eval(code, g)
 
     return g['Template']

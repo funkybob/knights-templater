@@ -22,7 +22,6 @@ class VarVisitor(ast.NodeTransformer):
 class Parser:
     def __init__(self, src):
         self.stream = tokenise(src)
-        self.base = 'object'
         self.parent = None
         self.methods = []
         self.tags = {}

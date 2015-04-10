@@ -2,6 +2,7 @@ import unittest
 
 from knights import compiler
 
+
 class Mock(object):
     def __init__(self, **kwargs):
         for k, v in kwargs.items():
@@ -25,4 +26,3 @@ class TemplateTestCase(unittest.TestCase):
             msg = 'Failed rendering template %s:\n%s: %s' % (
                 source, e.__class__.__name__, standardMsg)
             self.fail(msg)
-

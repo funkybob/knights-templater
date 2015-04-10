@@ -33,6 +33,7 @@ class LiteralSyntaxTest(TemplateTestCase):
         for src, expect in TESTS:
             self.assertRendered(src, expect)
 
+
 class VariableSyntaxTest(TemplateTestCase):
 
     def test_direct(self):
@@ -96,5 +97,3 @@ class VariableSyntaxTest(TemplateTestCase):
         )
         for src, ctx, expect in TESTS:
             self.assertRendered(src, expect, ctx)
-
-

@@ -1,4 +1,4 @@
-from .utils import TemplateTestCase, Mock
+from .utils import TemplateTestCase
 
 
 class BlockTagTest(TemplateTestCase):

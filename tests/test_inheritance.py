@@ -19,7 +19,6 @@ class InheritanceTestCase(TemplateTestCase):
         output = t()({})
         self.assertEqual(output, 'parent\n\n')
 
-
     def test_override_block(self):
         t = loader.load_template('inherit_override.html')
         output = t()({})

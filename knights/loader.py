@@ -31,4 +31,3 @@ def load_template(name, paths=None):
             traceback.print_exc()
 
     return None
-

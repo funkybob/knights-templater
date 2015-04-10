@@ -5,6 +5,7 @@ from django.template.backends.utils import csrf_input_lazy, csrf_token_lazy
 from . import compiler
 from . import loader
 
+
 class KnightsTemplater(BaseEngine):
 
     def __init__(self, params):
@@ -20,7 +21,7 @@ class KnightsTemplater(BaseEngine):
         tmpl = compiler.kompile(template_code)
         return Template(tmpl)
 
-    def get_template(self template_name):
+    def get_template(self, template_name):
         tmpl = loader.load_template(template_name)
         if tmpl is None:
             raise TemplateDoesNotExist(template_name)

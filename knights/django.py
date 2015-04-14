@@ -1,4 +1,4 @@
-from django.template import TemplateDoesNotExist, TemplateSyntaxError
+from django.template import TemplateDoesNotExist, TemplateSyntaxError  # NOQA
 from django.template.backends.base import BaseEngine
 from django.template.backends.utils import csrf_input_lazy, csrf_token_lazy
 
@@ -25,7 +25,7 @@ class KnightsTemplater(BaseEngine):
         tmpl = loader.load_template(template_name)
         if tmpl is None:
             raise TemplateDoesNotExist(template_name)
-        return Teplate(tmpl)
+        return Template(tmpl)
 
 
 class Template(object):

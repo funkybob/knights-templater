@@ -1,6 +1,7 @@
 import ast
 
 from .parser import Parser
+from .context import ContextScope
 
 
 def kompile(src, debug=False):
@@ -107,6 +108,7 @@ def kompile(src, debug=False):
     g = {
         'helpers': parser.helpers,
         'parent': parser.parent,
+        'ContextScope': ContextScope,
     }
     eval(code, g)
 

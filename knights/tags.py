@@ -77,15 +77,12 @@ def do_for(parser, token):
         targets = [loop.target.id]
 
     # Need to inject the loop values back into the context
+    # with ContextScope(context, ....) as context:
     inner = ast.With(
         items=[
             ast.withitem(
                 context_expr=ast.Call(
-                    func=ast.Subscript(
-                        value=ast.Name(id='helpers', ctx=ast.Load()),
-                        slice=ast.Index(value=ast.Str(s='forwrapper')),
-                        ctx=ast.Load()
-                    ),
+                    func=ast.Name(id='ContextScope', ctx=ast.Load()),
                     args=[
                         ast.Name(id='context', ctx=ast.Load()),
                     ],

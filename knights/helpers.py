@@ -1,7 +1,6 @@
 '''
 Default helper functions
 '''
-from contextlib import contextmanager
 from functools import wraps
 
 from .library import Library
@@ -24,15 +23,6 @@ def stringfilter(func):
 
     return _dec
 
-
-@register.helper
-@contextmanager
-def forwrapper(context, **kwargs):
-    '''
-    Helper for the for tag
-    '''
-    ctx = dict(context, **kwargs)
-    yield ctx
 
 # add
 # addslashes

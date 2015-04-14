@@ -18,3 +18,8 @@ def static(parser, token):
 @register.tag(name='include')
 def do_include(parser, token):
     return ast.Yield(value=ast.Str(s='{include %s}' % token))
+
+
+@register.helper
+def safe(value):
+    return str(value)

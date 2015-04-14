@@ -37,13 +37,13 @@ class Parser:
 
     def build_method(self, name, endnodes=None):
 
-        # Define the body of the function
-        body = [
-            # Include a blank to ensure it's never empty
-            ast.Expr(value=ast.Yield(value=ast.Str(s=''))),
-        ]
+        # Build the body
+        body = list(self.parse_node(endnodes))
+        # If it's empty include a blank t
+        if not body:
+            body.append(ast.Expr(value=ast.Yield(value=ast.Str(s=''))))
 
-        # Create the root method
+        # Create the method
         func = ast.FunctionDef(
             name=name,
             args=ast.arguments(
@@ -60,8 +60,6 @@ class Parser:
             body=body,
             decorator_list=[],
         )
-
-        body.extend(self.parse_node(endnodes))
 
         self.methods.append(func)
 

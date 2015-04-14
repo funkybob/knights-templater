@@ -26,6 +26,7 @@ def kompile(src, debug=False):
     parser.load_library('knights.helpers')
 
     # Define the __call__ method
+    # return ''.join(str(x) for x in self._root(context))
     func = ast.FunctionDef(
         name='__call__',
         args=ast.arguments(

@@ -102,7 +102,7 @@ def kompile(src, debug=False):
         import astpp
         print(astpp.dump(inst))
     # Compile code to create class
-    code = compile(inst, filename='<compiler>', mode='exec')
+    code = compile(inst, filename='<compiler>', mode='exec', optimize=2)
 
     # Execute it and return the instance
     g = {

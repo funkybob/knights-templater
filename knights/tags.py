@@ -104,3 +104,29 @@ def do_for(parser, token):
     loop.body = [inner]
 
     return loop
+
+
+@register.tag(name='include')
+def do_include(parser, token):
+    from .loader import load_template
+    template_name = token.strip()
+    tmpl = load_template(template_name)
+
+    parser.helpers.setdefault('_includes', {})[template_name] = tmpl()
+
+    return ast.Expr(
+        value=ast.Call(
+            func=ast.Subscript(
+                value=ast.Subscript(
+                    value=ast.Name(id='helpers', ctx=ast.Load()),
+                    slice=ast.Index(value=ast.Str(s='_includes')),
+                    ctx=ast.Load()
+                ),
+                slice=ast.Index(value=ast.Str(s=template_name)),
+                ctx=ast.Load()
+            ),
+            args=[
+                ast.Name(id='context', ctx=ast.Load()),
+            ], keywords=[], starargs=None, kwargs=None
+        )
+    )

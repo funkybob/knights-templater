@@ -42,7 +42,7 @@ Compile and render a template from a string:
 .. code-block:: python
 
     >>> import knights
-    >>> tclass = knights.kompile('Hello {{ name}}, how are you?')
+    >>> tclass = knights.kompile('Hello {{ name }}, how are you?')
     >>> t = tclass()
     >>> print(t({'name': 'Bob'}))
     Hello Bob, how are you?

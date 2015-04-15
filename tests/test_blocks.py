@@ -1,3 +1,5 @@
+import os
+
 from .utils import TemplateTestCase
 
 
@@ -49,4 +51,24 @@ class WithTagTest(TemplateTestCase):
             '''{% with a=1, b=c %}{{ a * b }}{% endwith %}''',
             '''3''',
             {'c': 3}
+        )
+
+
+class IncludeTagTest(TemplateTestCase):
+    def setUp(self):
+        from knights import loader
+        loader.add_path(os.path.join(os.path.dirname(__file__), 'templates/'))
+
+    def test_include(self):
+        self.assertRendered(
+            '''{% include "include.html" %}''',
+            '''included\n''',
+            {}
+        )
+
+    def test_include_with(self):
+        self.assertRendered(
+            '''{% include "include_more.html", a=val, b=6 %}''',
+            '''product: 18\n''',
+            {'val': 3}
         )

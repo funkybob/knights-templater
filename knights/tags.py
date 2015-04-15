@@ -7,19 +7,19 @@ from .library import Library
 register = Library()
 
 
-@register.tag(name='load')
+@register.tag
 def load(parser, token):
     parser.load_library(token)
 
 
-@register.tag(name='extends')
+@register.tag
 def extends(parser, token):
     from .loader import load_template
     parent = load_template(token)
     parser.parent = parent
 
 
-@register.tag(name='block')
+@register.tag
 def block(parser, token):
     name = token.strip()
     parser.build_method(name, endnodes=['endblock'])
@@ -132,26 +132,30 @@ def do_include(parser, token):
 
     parser.helpers.setdefault('_includes', {})[template_name] = tmpl()
 
-    action = ast.Call(
-        func=ast.Subscript(
-            value=ast.Subscript(
-                value=ast.Name(id='helpers', ctx=ast.Load()),
-                slice=ast.Index(value=ast.Str(s='_includes')),
+    action = ast.Yield(
+        value=ast.Call(
+            func=ast.Subscript(
+                value=ast.Subscript(
+                    value=ast.Name(id='helpers', ctx=ast.Load()),
+                    slice=ast.Index(value=ast.Str(s='_includes')),
+                    ctx=ast.Load()
+                ),
+                slice=ast.Index(value=ast.Str(s=template_name)),
                 ctx=ast.Load()
             ),
-            slice=ast.Index(value=ast.Str(s=template_name)),
-            ctx=ast.Load()
-        ),
-        args=[
-            ast.Name(id='context', ctx=ast.Load()),
-        ], keywords=[], starargs=None, kwargs=None
+            args=[
+                ast.Name(id='context', ctx=ast.Load()),
+            ], keywords=[], starargs=None, kwargs=None
+        )
     )
 
     if kwargs:
         kwargs = _wrap_kwargs(kwargs)
-        return _create_with_scope([action], kwargs)
+        return _create_with_scope([
+            ast.Expr(value=action)
+        ], kwargs)
 
-    return ast.Expr(value=action)
+    return action
 
 
 @register.tag(name='with')

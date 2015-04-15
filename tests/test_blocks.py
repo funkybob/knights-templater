@@ -41,3 +41,12 @@ class IfTagTest(TemplateTestCase):
         tmpl = '{% if a == 1 %}Yes!{% else %}No!{% endif %}'
         self.assertRendered(tmpl, 'Yes!', {'a': 1})
         self.assertRendered(tmpl, 'No!', {'a': 2})
+
+
+class WithTagTest(TemplateTestCase):
+    def test_simple_with(self):
+        self.assertRendered(
+            '''{% with a=1, b=c %}{{ a * b }}{% endwith %}''',
+            '''3''',
+            {'c': 3}
+        )

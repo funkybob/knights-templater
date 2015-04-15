@@ -1,7 +1,7 @@
 
 import ast
 
-from .parser import wrap_name_in_context
+from .parser import wrap_name_in_context, VarVisitor
 from .library import Library
 
 register = Library()
@@ -77,6 +77,16 @@ def _create_with_scope(body, kwargs):
     )
 
 
+def _wrap_kwargs(kwargs):
+    '''
+    Ensure expressions in keyword arguments are wrapped.
+    '''
+    visitor = VarVisitor()
+    for kw in kwargs:
+        visitor.visit(kw)
+    return kwargs
+
+
 @register.tag(name='for')
 def do_for(parser, token):
     '''
@@ -138,6 +148,7 @@ def do_include(parser, token):
     )
 
     if kwargs:
+        kwargs = _wrap_kwargs(kwargs)
         return _create_with_scope([action], kwargs)
 
     return ast.Expr(value=action)
@@ -145,8 +156,11 @@ def do_include(parser, token):
 
 @register.tag(name='with')
 def do_with(parser, token):
-    body = list(parser.parse_node(['endfor']))
+    body = list(parser.parse_node(['endwith']))
 
     args, kwargs = parser.parse_args(token)
+    # Need to wrap name lookups in kwarg expressions
+    kwargs = _wrap_kwargs(kwargs)
+    action = _create_with_scope(body, kwargs)
 
-    return _create_with_scope(body, kwargs)
+    return action

@@ -6,6 +6,10 @@ from .compiler import kompile
 PATHS = []
 
 
+class TemplateNotFound(Exception):
+    pass
+
+
 def add_path(path):
     path = os.path.abspath(path)
 
@@ -28,8 +32,5 @@ def load_template(name, paths=None):
             return kompile(src)
         except FileNotFoundError:
             pass
-        except:
-            import traceback
-            traceback.print_exc()
-
-    return None
+    else:
+        raise TemplateNotFound(name)

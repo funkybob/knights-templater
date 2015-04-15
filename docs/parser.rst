@@ -58,6 +58,15 @@ class.
       `var` nodes will produce code to evaluate the expression and yield their
       value.
 
+      `block` nodes will be resolved through the registered tags, unless they
+      match any listed in ``endnodes``, in which case the raw name will be
+      yielded before terminating the loop.
+
+   .. py:method:: parse_nodes_until(\*endnodes)
+
+      Return two values - a list of nodes, and the name of the matching end
+      node.  This is used for implementing
+
    .. py:method:: build_class
 
       Construct a Class definition from the current state.
@@ -73,3 +82,17 @@ class.
    .. py:method:: parse_args(expr)
 
       Helper method to parse an expression and yield a list of args and kwargs.
+
+
+.. py:function:: wrap_name_in_context(name)
+
+   Utility function to turn an ast.Name() node into code to affect:
+
+   .. code-block:: py
+
+      context['name']
+
+.. py:class:: VarVisitor
+
+   A subclass of :ast:NodeTransformer which applies `wrap_name_in_context` to
+   all Name nodes in the AST it visits.

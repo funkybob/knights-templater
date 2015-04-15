@@ -24,6 +24,20 @@ class ForTagTest(TemplateTestCase):
             {'seq': (('a', 1), ('b', 2))}
         )
 
+    def test_for_empty_false(self):
+        self.assertRendered(
+            '{% for a, b in seq %}{{ a }} == {{ b }},{% empty %}empty{% endfor %}',
+            'a == 1,b == 2,',
+            {'seq': (('a', 1), ('b', 2))},
+        )
+
+    def test_for_empty_true(self):
+        self.assertRendered(
+            '{% for a, b in seq %}{{ a }} == {{ b }},{% empty %}empty{% endfor %}',
+            'empty',
+            {'seq': (),},
+        )
+
 
 class IfTagTest(TemplateTestCase):
     def test_simple_if(self):

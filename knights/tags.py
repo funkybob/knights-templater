@@ -104,7 +104,7 @@ def do_for(parser, token):
 
     loop = code.body[0]
     loop.iter = wrap_name_in_context(loop.iter)
-    body, _ = parser.parse_nodes_until('endfor')
+    body, end = parser.parse_nodes_until('endfor', 'empty')
 
     if isinstance(loop.target, ast.Tuple):
         targets = [elt.id for elt in loop.target.elts]
@@ -118,6 +118,22 @@ def do_for(parser, token):
 
     loop.body = [_create_with_scope(body, kwargs)]
 
+    if end == 'empty':
+        # Now we wrap our for block in:
+        # if len(loop.iter):
+        # else:
+        empty, _ = parser.parse_nodes_until('endfor')
+
+        loop = ast.If(
+            test=ast.Call(
+                func=ast.Name(id='len', ctx=ast.Load()),
+                args=[loop.iter],
+                keywords=[], starargs=None, kwargs=None
+            ),
+            body=[loop],
+            orelse=empty
+        )
+                
     return loop
 
 

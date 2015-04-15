@@ -7,13 +7,30 @@ Default tags.
 
 .. py:function:: load name
 
+   .. code-block:: html
+
+      {% load foo.bar.baz %}
+
    Loads template library ``name``.
 
+   The name is treated as a python import path, and the loaded module is
+   expected to have a 'register' member, being an instance of :library:Library
+
 .. py:function:: extends name
+
+   .. code-block:: html
+
+      {% extends base.html %}
 
    Make this Template class extend the template in ``name``
 
 .. py:function:: block name
+
+   .. code-block:: html
+
+      {% block foo %}
+      ...
+      {% endblock %}
 
    Declares a new overridable block in the template.
 
@@ -42,7 +59,22 @@ Default tags.
 
 .. py:function:: for
 
+   .. code-block:: html
+
+      {% for a in sequence %}
+      ...
+      {% endfor %}
+
    A python compatible {% for %} tag.
+
+   .. code-block:: html
+
+      {% for a, b, c in foo.get(other=1) %}
+      ...
+      {% endfor %}
+
+   The target values will be stacked on the scope for the duration, and removed
+   once the loop exits.
 
 .. py:function:: include
 

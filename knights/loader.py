@@ -26,6 +26,8 @@ def load_template(name, paths=None):
                 src = fin.read()
 
             return kompile(src)
+        except FileNotFoundError:
+            pass
         except:
             import traceback
             traceback.print_exc()

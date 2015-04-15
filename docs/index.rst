@@ -19,6 +19,11 @@ Contents:
    helpers
    tags
 
+Requirements
+============
+
+Python 3.4+
+
 Introduction
 ============
 
@@ -32,12 +37,26 @@ and then use AST NodeTransformers to alter them to "work".
 Quick Start
 ===========
 
+Compile and render a template from a string:
+
 .. code-block:: python
 
     >>> import knights
-    >>> t = knights.kompile('Hello {{ name}}, how are you?')
-    >>> print(t()({'name': 'Bob'}))
+    >>> tclass = knights.kompile('Hello {{ name}}, how are you?')
+    >>> t = tclass()
+    >>> print(t({'name': 'Bob'}))
     Hello Bob, how are you?
+
+Load a template from a directory:
+
+.. code-block:: python
+
+   >>> from knights import loader
+   >>> loader.add_path('templates/')
+   >>> tclass = loader.load_template('index.html')
+   >>> t = tclass()
+   >>> t.render({....})
+   ...
 
 .. _Green Tree Snakes: https://greentreesnakes.readthedocs.org/en/latest/
 

@@ -36,9 +36,11 @@ class Parser:
         self.helpers.update(module.register.helpers)
 
     def build_method(self, name, endnodes=None):
-
         # Build the body
-        body = list(self.parse_node(endnodes))
+        if endnodes:
+            body, _ = self.parse_nodes_until(*endnodes)
+        else:
+            body = list(self.parse_node())
         # If it's empty include a blank t
         if not body:
             body.append(ast.Expr(value=ast.Yield(value=ast.Str(s=''))))
@@ -76,6 +78,7 @@ class Parser:
                 bits = token.token.strip().split(' ', 1)
                 tag_name = bits.pop(0).strip()
                 if endnodes and tag_name in endnodes:
+                    yield tag_name
                     return
                 func = self.tags[tag_name]
                 node = func(self, *bits)
@@ -88,6 +91,15 @@ class Parser:
             if isinstance(node, (ast.Yield, ast.YieldFrom)):
                 node = ast.Expr(value=node, lineno=token.lineno)
             yield node
+
+    def parse_nodes_until(self, *endnodes):
+        '''
+        '''
+        nodes = list(self.parse_node(endnodes=endnodes))
+        end = nodes.pop()
+        if not isinstance(end, str):
+            raise SyntaxError('Did not find end node %e - found %r instead' % (endnodes, end))
+        return nodes, end
 
     def build_class(self):
         return ast.ClassDef(

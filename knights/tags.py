@@ -42,14 +42,14 @@ def block(parser, token):
 def do_if(parser, token):
     code = parser.parse_expression(token)
 
-    nodelist = list(parser.parse_node(['endif']))
+    nodelist, end = parser.parse_nodes_until('endif', 'else')
 
-    return ast.If(test=code, body=nodelist, orelse=[])
+    if end == 'else':
+        elsenodes, _ = parser.parse_nodes_until('endif')
+    else:
+        elsenodes = []
 
-
-@register.tag(name='else')
-def do_else(parser, token=None):
-    return ast.Yield(value=ast.Str(s=''))
+    return ast.If(test=code, body=nodelist, orelse=elsenodes)
 
 
 def _create_with_scope(body, kwargs):
@@ -104,7 +104,7 @@ def do_for(parser, token):
 
     loop = code.body[0]
     loop.iter = wrap_name_in_context(loop.iter)
-    body = list(parser.parse_node(['endfor']))
+    body, _ = parser.parse_nodes_until('endfor')
 
     if isinstance(loop.target, ast.Tuple):
         targets = [elt.id for elt in loop.target.elts]
@@ -156,7 +156,7 @@ def do_include(parser, token):
 
 @register.tag(name='with')
 def do_with(parser, token):
-    body = list(parser.parse_node(['endwith']))
+    body, _ = parser.parse_nodes_until('endwith')
 
     args, kwargs = parser.parse_args(token)
     # Need to wrap name lookups in kwarg expressions

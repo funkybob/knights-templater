@@ -76,6 +76,16 @@ Default tags.
    The target values will be stacked on the scope for the duration, and removed
    once the loop exits.
 
+   Also you can provide an 'empty' block for when the list is empty.
+
+   .. code-block:: html
+
+      {% for a in sequence %}
+      ...
+      {% empty %}
+      sequence is empty
+      {% endfor %}
+
 .. py:function:: include
 
    Include another template in situ, using the current context.

@@ -30,7 +30,40 @@ Default tags.
       ...
       {% endif %}
 
+   Optionally, it may contain an else:
+
+   .. code-block:: html
+
+      {% if ...expre... %}
+      ...
+      {% else %}
+      ...
+      {% endif %}
+
 .. py:function:: for
 
    A python compatible {% for %} tag.
 
+.. py:function:: include
+
+   Include another template in situ, using the current context.
+
+   .. code-block:: html
+
+      {% include "othertemplate.html" %}
+
+   Optionally, you can update the context by passing keyword arguments:
+
+   .. code-block:: html
+
+      {% include "other.html" foo=1, bar=baz * 6 %}
+
+.. py:function:: with
+
+   Temporarily augment the current context.
+
+   .. code-block:: html
+
+      {% with ...kwargs... %}
+      ...
+      {% endwith %}

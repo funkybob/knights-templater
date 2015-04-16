@@ -11,10 +11,10 @@ Contents:
 .. toctree::
    :maxdepth: 2
 
-   library
    loader
    helpers
    tags
+   library
 
 Requirements
 ============

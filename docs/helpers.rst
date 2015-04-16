@@ -1,5 +1,5 @@
-Helpers
-=======
+Default Helpers
+===============
 
 .. py:module:: knights.helpers
 

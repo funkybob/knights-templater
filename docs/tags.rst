@@ -1,5 +1,5 @@
-Tags
-====
+Default Tags
+============
 
 .. py:module:: knights.tags
 

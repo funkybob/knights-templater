@@ -6,7 +6,7 @@ TokenType = Enum('Token', 'comment text var block',)
 
 tag_re = re.compile(
     '|'.join([
-        r'{%\s*(?P<tag>.+?)\s*%}',
+        r'{%\s*(?P<block>.+?)\s*%}',
         r'{{\s*(?P<var>.+?)\s*}}',
         r'{#\s*(?P<comment>.+?)\s*#}'
     ]),
@@ -36,14 +36,9 @@ def tokenise(template):
             yield Token(TokenType.text, template[upto:start], lineno)
         upto = end
 
-        tag, var, comment = m.groups()
-        # Which group matched?
-        if tag is not None:
-            yield Token(TokenType.block, tag, lineno)
-        elif var is not None:
-            yield Token(TokenType.var, var, lineno)
-        else:
-            yield Token(TokenType.comment, comment, lineno)
+        mode = m.lastgroup
+        content = m.group(m.lastgroup)
+        yield Token(TokenType[mode], content, lineno)
 
     # if the last match ended before the end of the source, we have a tail Text
     # node.

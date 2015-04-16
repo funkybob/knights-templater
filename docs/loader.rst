@@ -16,6 +16,8 @@ Load templates from files.
    First resolves the absolute path of ``path``, then, if it's not already in
    the list, adds it to PATHS
 
+   Relative paths are resolved relative to CWD.
+
 .. py:function:: load_template(name)
 
    Loads and compiles a template from ``name``.

@@ -11,10 +11,7 @@ Contents:
 .. toctree::
    :maxdepth: 2
 
-   lexer
-   parser
    library
-   compiler
    loader
    helpers
    tags
@@ -27,12 +24,11 @@ Python 3.4+
 Introduction
 ============
 
-This is one of my many template engine projects.
+Knights Templater is a light-weight, super-fast template engine which compile
+your templates into Python classes.
 
-My specific focus this time was to use Python to compile the tag expressions,
-and then use AST NodeTransformers to alter them to "work".
-
-(See `Green Tree Snakes`_ for an excellent introductin to Python AST.)
+The syntax is based on Django's DTL, but as it allows raw Python the need for
+filter piping has been obviated.
 
 Quick Start
 ===========
@@ -58,5 +54,11 @@ Load a template from a directory:
    >>> t.render({....})
    ...
 
-.. _Green Tree Snakes: https://greentreesnakes.readthedocs.org/en/latest/
+Thanks
+======
 
+Many thanks to Markus Holterman for soundboarding for all my ideas.
+
+See `Green Tree Snakes`_ for an excellent introductin to Python AST.
+
+.. _Green Tree Snakes: https://greentreesnakes.readthedocs.org/en/latest/

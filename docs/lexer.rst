@@ -20,7 +20,7 @@ The Lexer processes the source string by breaking it into a sequence of Tokens.
 
       A TokenType.
 
-   .. py:attribute:: token
+   .. py:attribute:: content
 
       The raw text content of the token.
 

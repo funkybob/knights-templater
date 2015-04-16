@@ -133,7 +133,7 @@ def do_for(parser, token):
             body=[loop],
             orelse=empty
         )
-                
+
     return loop
 
 

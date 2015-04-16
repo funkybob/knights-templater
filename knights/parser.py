@@ -70,12 +70,12 @@ class Parser:
     def parse_node(self, endnodes=None):
         for token in self.stream:
             if token.mode == TokenType.text:
-                node = ast.Yield(value=ast.Str(s=token.token))
+                node = ast.Yield(value=ast.Str(s=token.content))
             elif token.mode == TokenType.var:
-                code = self.parse_expression(token.token)
+                code = self.parse_expression(token.content)
                 node = ast.Yield(value=code)
             elif token.mode == TokenType.block:
-                bits = token.token.strip().split(' ', 1)
+                bits = token.content.strip().split(' ', 1)
                 tag_name = bits.pop(0).strip()
                 if endnodes and tag_name in endnodes:
                     yield tag_name

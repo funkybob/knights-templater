@@ -1,7 +1,7 @@
 
 import ast
 
-from .parser import wrap_name_in_context, VarVisitor
+from .parser import wrap_name_in_context, visitor
 from .library import Library
 
 register = Library()
@@ -81,7 +81,6 @@ def _wrap_kwargs(kwargs):
     '''
     Ensure expressions in keyword arguments are wrapped.
     '''
-    visitor = VarVisitor()
     for kw in kwargs:
         visitor.visit(kw)
     return kwargs

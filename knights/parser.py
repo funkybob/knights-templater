@@ -18,6 +18,8 @@ class VarVisitor(ast.NodeTransformer):
             return node
         return wrap_name_in_context(node)
 
+visitor = VarVisitor()
+
 
 class Parser:
     def __init__(self, src):
@@ -116,7 +118,7 @@ class Parser:
 
     def parse_expression(self, expr):
         code = ast.parse(expr, mode='eval')
-        VarVisitor().visit(code)
+        visitor.visit(code)
         return code.body
 
     def parse_args(self, expr):

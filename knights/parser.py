@@ -43,7 +43,7 @@ class Parser:
             body, _ = self.parse_nodes_until(*endnodes)
         else:
             body = list(self.parse_node())
-        # If it's empty include a blank t
+        # If it's empty include a blank
         if not body:
             body.append(ast.Expr(value=ast.Yield(value=ast.Str(s=''))))
 

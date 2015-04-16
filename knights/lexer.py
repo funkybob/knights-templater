@@ -16,6 +16,7 @@ tag_re = re.compile(
 
 class Token:
     __slots__ = ('mode', 'content', 'lineno')
+
     def __init__(self, mode, content, lineno=None):
         self.mode = mode
         self.content = content

@@ -38,9 +38,8 @@ Compile and render a template from a string:
 .. code-block:: python
 
     >>> import knights
-    >>> tclass = knights.kompile('Hello {{ name }}, how are you?')
-    >>> t = tclass()
-    >>> print(t({'name': 'Bob'}))
+    >>> tmpl = knights.kompile('Hello {{ name }}, how are you?')
+    >>> print(tmpl({'name': 'Bob'}))
     Hello Bob, how are you?
 
 Load a template from a directory:
@@ -49,9 +48,8 @@ Load a template from a directory:
 
    >>> from knights import loader
    >>> loader.add_path('templates/')
-   >>> tclass = loader.load_template('index.html')
-   >>> t = tclass()
-   >>> t.render({....})
+   >>> tmpl = loader.load_template('index.html')
+   >>> tmpl.render({....})
    ...
 
 Thanks

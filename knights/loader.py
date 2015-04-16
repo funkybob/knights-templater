@@ -17,7 +17,7 @@ def add_path(path):
         PATHS.append(path)
 
 
-def load_template(name, paths=None):
+def load_template(name, paths=None, raw=False):
     if paths is None:
         paths = PATHS[:]
 
@@ -29,7 +29,7 @@ def load_template(name, paths=None):
             with open(full_name, encoding='utf-8') as fin:
                 src = fin.read()
 
-            return kompile(src)
+            return kompile(src, raw=raw)
         except FileNotFoundError:
             pass
     else:

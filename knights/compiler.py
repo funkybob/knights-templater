@@ -5,7 +5,7 @@ from .parser import Parser
 from .utils import Helpers
 
 
-def kompile(src, debug=False):
+def kompile(src, debug=False, raw=False):
     '''
     Creates a new class based on the supplied template, and returnsit.
 
@@ -113,4 +113,7 @@ def kompile(src, debug=False):
     }
     eval(code, g)
 
-    return g['Template']
+    klass = g['Template']
+    if raw:
+        return klass
+    return klass()

@@ -15,7 +15,7 @@ def load(parser, token):
 @register.tag
 def extends(parser, token):
     from .loader import load_template
-    parent = load_template(token)
+    parent = load_template(token, raw=True)
     parser.parent = parent
 
 
@@ -145,7 +145,7 @@ def do_include(parser, token):
     template_name = args[0].s
     tmpl = load_template(template_name)
 
-    parser.helpers.setdefault('_includes', {})[template_name] = tmpl()
+    parser.helpers.setdefault('_includes', {})[template_name] = tmpl
 
     action = ast.Yield(
         value=ast.Call(

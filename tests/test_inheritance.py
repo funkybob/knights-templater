@@ -16,10 +16,10 @@ class InheritanceTestCase(TemplateTestCase):
         Test that we can inherit.
         '''
         t = loader.load_template('inherit_simple.html')
-        output = t()({})
+        output = t({})
         self.assertEqual(output, 'parent\n\n')
 
     def test_override_block(self):
         t = loader.load_template('inherit_override.html')
-        output = t()({})
+        output = t({})
         self.assertEqual(output, 'parent\nchild\n')

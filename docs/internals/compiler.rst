@@ -8,9 +8,13 @@ Contains the main compilation function for driving template construction.
 To avoid clashing with the built-in `compile` this method is called `kompile`.
 
 
-.. py:function:: kompile(source, debug=False)
+.. py:function:: kompile(source, debug=False, raw=False)
 
    Compiles a template from the provided source string.
+
+   If ``debug`` is True it will dump the AST used to compile the class.
+
+   If ``raw`` is True, the template class will be returned, not an instance.
 
    Constructs a ``knights.parser.Parser`` class, loads the default `tags` and
    `helpers`, and builds a ``__call__`` method for the class which is

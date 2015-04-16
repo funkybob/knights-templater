@@ -18,13 +18,13 @@ Load templates from files.
 
    Relative paths are resolved relative to CWD.
 
-.. py:function:: load_template(name)
+.. py:function:: load_template(name, paths=None, raw=False)
 
    Loads and compiles a template from ``name``.
 
-   Searches PATHS for a template matching the name.
+   Searches paths for a template matching the name.  If ``paths`` is not
+   supplied, it will use ``PATHS``.
 
-   Relative names are supported, but can not result in paths outside those in
-   the PATHS list.
+   If a matching file can not be found None is returned.
 
-   Returns either the compiled template class, or None.
+   If ``raw`` is True, the template class will be returned, not an instance.

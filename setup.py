@@ -3,7 +3,7 @@ from setuptools import setup, find_packages
 
 setup(
     name='knights-templater',
-    version='0.1',
+    version='1.0',
     packages=find_packages(),
     author='Curtis Maloney',
     author_email='curtis@tinbrain.net',

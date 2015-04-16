@@ -96,7 +96,7 @@ def do_for(parser, token):
     We create the structure:
 
     for a, b, c in iterable:
-        with helpers['forwrapper'](context, a=a, b=b, c=c):
+        with ContextWrapper(context, a=a, b=b, c=c):
             ...
     '''
     code = ast.parse('for %s: pass' % token, mode='exec')
@@ -150,9 +150,9 @@ def do_include(parser, token):
     action = ast.Yield(
         value=ast.Call(
             func=ast.Subscript(
-                value=ast.Subscript(
+                value=ast.Attribute(
                     value=ast.Name(id='helpers', ctx=ast.Load()),
-                    slice=ast.Index(value=ast.Str(s='_includes')),
+                    attr='_includes',
                     ctx=ast.Load()
                 ),
                 slice=ast.Index(value=ast.Str(s=template_name)),

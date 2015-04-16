@@ -1,7 +1,8 @@
 import ast
 
-from .parser import Parser
 from .context import ContextScope
+from .parser import Parser
+from .utils import Helpers
 
 
 def kompile(src, debug=False):
@@ -106,7 +107,7 @@ def kompile(src, debug=False):
 
     # Execute it and return the instance
     g = {
-        'helpers': parser.helpers,
+        'helpers': Helpers(parser.helpers),
         'parent': parser.parent,
         'ContextScope': ContextScope,
     }

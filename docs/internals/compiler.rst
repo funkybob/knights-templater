@@ -12,7 +12,9 @@ To avoid clashing with the built-in `compile` this method is called `kompile`.
 
    Compiles a template from the provided source string.
 
-   Constructs a ``knights.parser.Parser`` class, loads the default `tags` and `helpers`, and builds a ``__call__`` method for the class which is effectively:
+   Constructs a ``knights.parser.Parser`` class, loads the default `tags` and
+   `helpers`, and builds a ``__call__`` method for the class which is
+   effectively:
 
    .. code-block:: python
 

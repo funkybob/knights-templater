@@ -44,7 +44,7 @@ class Parser:
             # _ = []
             ast.Assign(
                 targets=[
-                    ast.Name(id='_', ctx=ast.Store()),
+                    ast.Name(id='__', ctx=ast.Store()),
                 ],
                 value=ast.List(elts=[], ctx=ast.Load())
             ),
@@ -55,7 +55,7 @@ class Parser:
                     ast.Name(id='_a', ctx=ast.Store()),
                 ],
                 value=ast.Attribute(
-                    value=ast.Name(id='_', ctx=ast.Load()),
+                    value=ast.Name(id='__', ctx=ast.Load()),
                     attr='append',
                     ctx=ast.Load()
                 )
@@ -67,7 +67,7 @@ class Parser:
                     ast.Name(id='_e', ctx=ast.Store()),
                 ],
                 value=ast.Attribute(
-                    value=ast.Name(id='_', ctx=ast.Load()),
+                    value=ast.Name(id='__', ctx=ast.Load()),
                     attr='extend',
                     ctx=ast.Load()
                 )
@@ -85,7 +85,7 @@ class Parser:
 
         # Add return statement
         body.append(
-            ast.Return(value=ast.Name(id='_', ctx=ast.Load())),
+            ast.Return(value=ast.Name(id='__', ctx=ast.Load())),
         )
 
         # Create the method

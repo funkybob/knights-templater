@@ -19,10 +19,10 @@ support.
 
 https://bitbucket.org/funkybob/helloworld
 
-And the results on my MacBook Air are:
-
 - Django (1.8)
 - Jinja2 (2.7.3)
+
+And the results on my MacBook Air are:
 
     $ python benchmark.py
 

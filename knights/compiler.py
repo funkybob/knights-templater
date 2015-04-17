@@ -11,7 +11,7 @@ def kompile(src, debug=False, raw=False, filename='<compiler>'):
 
     class Template(object):
         def __call__(self, context):
-            return ''.join(str(x) for x in self._root(context))
+            return ''.join(map(str, self._root(context)))
 
         def _root(self, context):
             yield ''
@@ -43,6 +43,7 @@ def kompile(src, debug=False, raw=False, filename='<compiler>'):
             kw_defaults=[],
         ),
         body=[
+
             ast.Return(
                 value=ast.Call(
                     func=ast.Attribute(
@@ -51,35 +52,29 @@ def kompile(src, debug=False, raw=False, filename='<compiler>'):
                         ctx=ast.Load()
                     ),
                     args=[
-                        ast.GeneratorExp(
-                            elt=ast.Call(
-                                func=ast.Name(id='str', ctx=ast.Load()),
-                                args=[
-                                    ast.Name(id='x', ctx=ast.Load()),
-                                ],
-                                keywords=[], starargs=None, kwargs=None
-                            ),
-                            generators=[
-                                ast.comprehension(
-                                    target=ast.Name(id='x', ctx=ast.Store()),
-                                    iter=ast.Call(
-                                        func=ast.Attribute(
-                                            value=ast.Name(id='self', ctx=ast.Load()),
-                                            attr='_root',
-                                            ctx=ast.Load()
-                                        ),
-                                        args=[
-                                            ast.Name(id='context', ctx=ast.Load()),
-                                        ], keywords=[], starargs=None, kwargs=None
+                        ast.Call(
+                            func=ast.Name(id='map', ctx=ast.Load()),
+                            args=[
+                                ast.Name(id='str', ctx=ast.Load()),
+                                ast.Call(
+                                    func=ast.Attribute(
+                                        value=ast.Name(id='self', ctx=ast.Load()),
+                                        attr='_root',
+                                        ctx=ast.Load()
                                     ),
-                                    ifs=[]
+                                    args=[
+                                        ast.Name(id='context', ctx=ast.Load()),
+                                    ],
+                                    keywords=[], starargs=None, kwargs=None
                                 ),
-                            ]
+                            ],
+                            keywords=[], starargs=None, kwargs=None
                         ),
                     ],
                     keywords=[], starargs=None, kwargs=None
                 )
             ),
+
         ],
         decorator_list=[],
     )

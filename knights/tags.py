@@ -23,18 +23,25 @@ def extends(parser, token):
 def block(parser, token):
     name = token.strip()
     parser.build_method(name, endnodes=['endblock'])
-    return ast.YieldFrom(
-        value=ast.Call(
-            func=ast.Attribute(
-                value=ast.Name(id='self', ctx=ast.Load()),
-                attr=name,
-                ctx=ast.Load()
-            ),
-            args=[
-                ast.Name(id='context', ctx=ast.Load()),
-            ],
-            keywords=[], starargs=None, kwargs=None
-        )
+    return ast.Call(
+        func=ast.Name(id='_e', ctx=ast.Load()),
+        args=[
+
+            # self.{name}(context)
+            ast.Call(
+                func=ast.Attribute(
+                    value=ast.Name(id='self', ctx=ast.Load()),
+                    attr=name,
+                    ctx=ast.Load()
+                ),
+                args=[
+                    ast.Name(id='context', ctx=ast.Load()),
+                ],
+                keywords=[], starargs=None, kwargs=None
+            )
+
+        ],
+        keywords=[], starargs=None, kwargs=None
     )
 
 
@@ -143,21 +150,25 @@ def do_include(parser, token):
 
     parser.helpers.setdefault('_includes', {})[template_name] = tmpl
 
-    action = ast.Yield(
-        value=ast.Call(
-            func=ast.Subscript(
-                value=ast.Attribute(
-                    value=ast.Name(id='_', ctx=ast.Load()),
-                    attr='_includes',
+    action = ast.Call(
+        func=ast.Name(id='_e', ctx=ast.Load()),
+        args=[
+            ast.Call(
+                func=ast.Subscript(
+                    value=ast.Attribute(
+                        value=ast.Name(id='_', ctx=ast.Load()),
+                        attr='_includes',
+                        ctx=ast.Load()
+                    ),
+                    slice=ast.Index(value=ast.Str(s=template_name)),
                     ctx=ast.Load()
                 ),
-                slice=ast.Index(value=ast.Str(s=template_name)),
-                ctx=ast.Load()
-            ),
-            args=[
-                ast.Name(id='context', ctx=ast.Load()),
-            ], keywords=[], starargs=None, kwargs=None
-        )
+                args=[
+                    ast.Name(id='context', ctx=ast.Load()),
+                ], keywords=[], starargs=None, kwargs=None
+            )
+        ],
+        keywords=[], starargs=None, kwargs=None
     )
 
     if kwargs:

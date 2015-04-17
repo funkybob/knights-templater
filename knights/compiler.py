@@ -14,9 +14,10 @@ def kompile(src, debug=False, raw=False, filename='<compiler>'):
             return ''.join(str(x) for x in self._root(context))
 
         def _root(self, context):
-            yield ''
-            yield ...
-            yield from self.head(context)
+            _ = []
+            _a = [].append
+            _a(...)
+            return _
 
     Blocks create new methods, and add a 'yield from self.{block}(context)' to
     the current function

@@ -38,14 +38,55 @@ class Parser:
         self.helpers.update(module.register.helpers)
 
     def build_method(self, name, endnodes=None):
+
+        # body lead in
+        body = [
+            # _ = []
+            ast.Assign(
+                targets=[
+                    ast.Name(id='_', ctx=ast.Store()),
+                ],
+                value=ast.List(elts=[], ctx=ast.Load())
+            ),
+
+            # _a = _.append
+            ast.Assign(
+                targets=[
+                    ast.Name(id='_a', ctx=ast.Store()),
+                ],
+                value=ast.Attribute(
+                    value=ast.Name(id='_', ctx=ast.Load()),
+                    attr='append',
+                    ctx=ast.Load()
+                )
+            ),
+
+            # _e = _.extend
+            ast.Assign(
+                targets=[
+                    ast.Name(id='_e', ctx=ast.Store()),
+                ],
+                value=ast.Attribute(
+                    value=ast.Name(id='_', ctx=ast.Load()),
+                    attr='extend',
+                    ctx=ast.Load()
+                )
+            ),
+
+        ]
+
         # Build the body
         if endnodes:
-            body, _ = self.parse_nodes_until(*endnodes)
+            _body, _ = self.parse_nodes_until(*endnodes)
         else:
-            body = list(self.parse_node())
-        # If it's empty include a blank
-        if not body:
-            body.append(ast.Expr(value=ast.Yield(value=ast.Str(s=''))))
+           _body = list(self.parse_node())
+
+        body.extend(_body)
+
+        # Add return statement
+        body.append(
+            ast.Return(value=ast.Name(id='_', ctx=ast.Load())),
+        )
 
         # Create the method
         func = ast.FunctionDef(
@@ -72,10 +113,20 @@ class Parser:
     def parse_node(self, endnodes=None):
         for token in self.stream:
             if token.mode == TokenType.text:
-                node = ast.Yield(value=ast.Str(s=token.content))
+                node = value=ast.Call(
+                    func=ast.Name(id='_a', ctx=ast.Load()),
+                    args=[ast.Str(s=token.content)],
+                    keywords=[], starargs=None, kwargs=None
+                )
+
             elif token.mode == TokenType.var:
                 code = self.parse_expression(token.content)
-                node = ast.Yield(value=code)
+                node = value=ast.Call(
+                    func=ast.Name(id='_a', ctx=ast.Load()),
+                    args=[code],
+                    keywords=[], starargs=None, kwargs=None
+                )
+
             elif token.mode == TokenType.block:
                 bits = token.content.strip().split(' ', 1)
                 tag_name = bits.pop(0).strip()
@@ -84,14 +135,17 @@ class Parser:
                     return
                 func = self.tags[tag_name]
                 node = func(self, *bits)
+
             else:
                 # Must be a comment
                 continue
 
             if node is None:
                 continue
-            if isinstance(node, (ast.Yield, ast.YieldFrom)):
-                node = ast.Expr(value=node, lineno=token.lineno)
+
+            if isinstance(node, ast.Call):
+                node = ast.Expr(value=node)
+
             yield node
 
     def parse_nodes_until(self, *endnodes):

@@ -151,7 +151,7 @@ def do_include(parser, token):
         value=ast.Call(
             func=ast.Subscript(
                 value=ast.Attribute(
-                    value=ast.Name(id='helpers', ctx=ast.Load()),
+                    value=ast.Name(id='_', ctx=ast.Load()),
                     attr='_includes',
                     ctx=ast.Load()
                 ),

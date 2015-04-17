@@ -107,7 +107,7 @@ def kompile(src, debug=False, raw=False):
 
     # Execute it and return the instance
     g = {
-        'helpers': Helpers(parser.helpers),
+        '_': Helpers(parser.helpers),
         'parent': parser.parent,
         'ContextScope': ContextScope,
     }

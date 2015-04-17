@@ -38,6 +38,12 @@ class ForTagTest(TemplateTestCase):
             {'seq': (),},
         )
 
+    def test_scope(self):
+        self.assertRendered(
+            '{% for a in seq %}{{ a * b }} {% endfor %}',
+            '2 4 6 ',
+            {'seq': (1, 2, 3), 'b': 2},
+        )
 
 class IfTagTest(TemplateTestCase):
     def test_simple_if(self):

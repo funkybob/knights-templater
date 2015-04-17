@@ -5,7 +5,7 @@ from .parser import Parser
 from .utils import Helpers
 
 
-def kompile(src, debug=False, raw=False):
+def kompile(src, debug=False, raw=False, filename='<compiler>'):
     '''
     Creates a new class based on the supplied template, and returnsit.
 
@@ -103,7 +103,7 @@ def kompile(src, debug=False, raw=False):
         import astpp
         print(astpp.dump(inst))
     # Compile code to create class
-    code = compile(inst, filename='<compiler>', mode='exec', optimize=2)
+    code = compile(inst, filename=filename, mode='exec', optimize=2)
 
     # Execute it and return the instance
     g = {

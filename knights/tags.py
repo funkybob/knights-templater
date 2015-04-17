@@ -119,16 +119,12 @@ def do_for(parser, token):
 
     if end == 'empty':
         # Now we wrap our for block in:
-        # if len(loop.iter):
+        # if loop.iter:
         # else:
         empty, _ = parser.parse_nodes_until('endfor')
 
         loop = ast.If(
-            test=ast.Call(
-                func=ast.Name(id='len', ctx=ast.Load()),
-                args=[loop.iter],
-                keywords=[], starargs=None, kwargs=None
-            ),
+            test=loop.iter,
             body=[loop],
             orelse=empty
         )

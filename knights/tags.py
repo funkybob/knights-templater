@@ -95,16 +95,29 @@ def do_for(parser, token):
 
     We create the structure:
 
-    for a, b, c in iterable:
-        with ContextWrapper(context, a=a, b=b, c=c):
+    with ContextWrapper(context) as context:
+        for a, b, c in iterable:
+            context.update(a=a, b=b, c=c)
             ...
+
+    If there is a {% empty %} clause, we create:
+
+    if iterable:
+        { above code }
+    else:
+        { empty clause }
     '''
     code = ast.parse('for %s: pass' % token, mode='exec')
 
+    # Grab the ast.For node
     loop = code.body[0]
+    # Wrap its source iterable
     loop.iter = wrap_name_in_context(loop.iter)
+
+    # Get the body of the loop
     body, end = parser.parse_nodes_until('endfor', 'empty')
 
+    # Build a list of target variable names
     if isinstance(loop.target, ast.Tuple):
         targets = [elt.id for elt in loop.target.elts]
     else:
@@ -115,7 +128,21 @@ def do_for(parser, token):
         for elt in targets
     ]
 
-    loop.body = [_create_with_scope(body, kwargs)]
+    # Insert our update call at the start of the loop body
+    body.insert(0,
+        ast.Expr(
+            value=ast.Call(
+                func=ast.Attribute(
+                    value=ast.Name(id='context', ctx=ast.Load()),
+                    attr='update',
+                    ctx=ast.Load()
+                ), args=[], keywords=kwargs, starargs=None, kwargs=None
+            )
+        )
+    )
+    loop.body = body
+
+    node = _create_with_scope([loop], [])
 
     if end == 'empty':
         # Now we wrap our for block in:
@@ -123,13 +150,13 @@ def do_for(parser, token):
         # else:
         empty, _ = parser.parse_nodes_until('endfor')
 
-        loop = ast.If(
+        node = ast.If(
             test=loop.iter,
-            body=[loop],
+            body=[node],
             orelse=empty
         )
 
-    return loop
+    return node
 
 
 @register.tag(name='include')

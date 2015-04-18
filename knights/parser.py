@@ -97,8 +97,7 @@ class Parser:
     def parse_nodes_until(self, *endnodes):
         '''
         '''
-        nodes = list(self.parse_node(endnodes=endnodes))
-        end = nodes.pop()
+        *nodes, end = list(self.parse_node(endnodes=endnodes))
         if not isinstance(end, str):
             raise SyntaxError('Did not find end node %e - found %r instead' % (endnodes, end))
         return nodes, end

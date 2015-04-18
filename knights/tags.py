@@ -1,6 +1,7 @@
 
 import ast
 
+from . import astlib as _a
 from .parser import wrap_name_in_context, visitor
 from .library import Library
 
@@ -24,17 +25,7 @@ def block(parser, token):
     name = token.strip()
     parser.build_method(name, endnodes=['endblock'])
     return ast.YieldFrom(
-        value=ast.Call(
-            func=ast.Attribute(
-                value=ast.Name(id='self', ctx=ast.Load()),
-                attr=name,
-                ctx=ast.Load()
-            ),
-            args=[
-                ast.Name(id='context', ctx=ast.Load()),
-            ],
-            keywords=[], starargs=None, kwargs=None
-        )
+        value=_a.Call(_a.Attribute(_a.Name('self'), name), [_a.Name('context')])
     )
 
 
@@ -62,15 +53,12 @@ def _create_with_scope(body, kwargs):
     return ast.With(
         items=[
             ast.withitem(
-                context_expr=ast.Call(
-                    func=ast.Name(id='ContextScope', ctx=ast.Load()),
-                    args=[
-                        ast.Name(id='context', ctx=ast.Load()),
-                    ],
+                context_expr=_a.Call(
+                    _a.Name('ContextScope'),
+                    [_a.Name('context')],
                     keywords=kwargs,
-                    starargs=None, kwargs=None
                 ),
-                optional_vars=ast.Name(id='context', ctx=ast.Store())
+                optional_vars=_a.Name('context', ctx=ast.Store())
             ),
         ],
         body=body,
@@ -124,20 +112,14 @@ def do_for(parser, token):
         targets = [loop.target.id]
 
     kwargs = [
-        ast.keyword(arg=elt, value=ast.Name(id=elt, ctx=ast.Load()))
+        ast.keyword(arg=elt, value=_a.Name(elt))
         for elt in targets
     ]
 
     # Insert our update call at the start of the loop body
     body.insert(0,
         ast.Expr(
-            value=ast.Call(
-                func=ast.Attribute(
-                    value=ast.Name(id='context', ctx=ast.Load()),
-                    attr='update',
-                    ctx=ast.Load()
-                ), args=[], keywords=kwargs, starargs=None, kwargs=None
-            )
+            value=_a.Call(_a.Attribute(_a.Name('context'), 'update'), keywords=kwargs)
         )
     )
     loop.body = body
@@ -170,28 +152,23 @@ def do_include(parser, token):
 
     parser.helpers.setdefault('_includes', {})[template_name] = tmpl
 
+    # yield _._includes[name](context)
     action = ast.Yield(
-        value=ast.Call(
+        value=_a.Call(
             func=ast.Subscript(
-                value=ast.Attribute(
-                    value=ast.Name(id='_', ctx=ast.Load()),
-                    attr='_includes',
-                    ctx=ast.Load()
-                ),
+                value=_a.Attribute(_a.Name('_'), '_includes'),
                 slice=ast.Index(value=ast.Str(s=template_name)),
                 ctx=ast.Load()
             ),
             args=[
-                ast.Name(id='context', ctx=ast.Load()),
-            ], keywords=[], starargs=None, kwargs=None
+                _a.Name('context'),
+            ]
         )
     )
 
     if kwargs:
         kwargs = _wrap_kwargs(kwargs)
-        return _create_with_scope([
-            ast.Expr(value=action)
-        ], kwargs)
+        return _create_with_scope([ast.Expr(value=action)], kwargs)
 
     return action
 

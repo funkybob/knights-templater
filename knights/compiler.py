@@ -1,5 +1,6 @@
 import ast
 
+from . import astlib as _a
 from .context import ContextScope
 from .parser import Parser
 from .utils import Helpers
@@ -32,10 +33,7 @@ def kompile(src, debug=False, raw=False, filename='<compiler>'):
     func = ast.FunctionDef(
         name='__call__',
         args=ast.arguments(
-            args=[
-                ast.arg(arg='self', annotation=None),
-                ast.arg(arg='context', annotation=None),
-            ],
+            args=_a.args('self', 'context'),
             vararg=None,
             kwonlyargs=[],
             kwarg=None,
@@ -45,33 +43,15 @@ def kompile(src, debug=False, raw=False, filename='<compiler>'):
         body=[
 
             ast.Return(
-                value=ast.Call(
-                    func=ast.Attribute(
-                        value=ast.Str(s=''),
-                        attr='join',
-                        ctx=ast.Load()
-                    ),
+                value=_a.Call(
+                    _a.Attribute(ast.Str(s=''), 'join'),
                     args=[
-                        ast.Call(
-                            func=ast.Name(id='map', ctx=ast.Load()),
-                            args=[
-                                ast.Name(id='str', ctx=ast.Load()),
-                                ast.Call(
-                                    func=ast.Attribute(
-                                        value=ast.Name(id='self', ctx=ast.Load()),
-                                        attr='_root',
-                                        ctx=ast.Load()
-                                    ),
-                                    args=[
-                                        ast.Name(id='context', ctx=ast.Load()),
-                                    ],
-                                    keywords=[], starargs=None, kwargs=None
-                                ),
-                            ],
-                            keywords=[], starargs=None, kwargs=None
-                        ),
+                        _a.Call(_a.Name('map'), [
+                            _a.Name('str'),
+                            _a.Call(_a.Attribute(_a.Name('self'), '_root'),
+                                    [_a.Name('context')]),
+                        ]),
                     ],
-                    keywords=[], starargs=None, kwargs=None
                 )
             ),
 

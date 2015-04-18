@@ -1,12 +1,13 @@
 import ast
 from importlib import import_module
 
+from . import astlib as _a
 from .lexer import TokenType, tokenise
 
 
 def wrap_name_in_context(name):
     return ast.Subscript(
-        value=ast.Name(id='context', ctx=ast.Load()),
+        value=_a.Name('context'),
         slice=ast.Index(value=ast.Str(s=name.id)),
         ctx=ast.Load(),
     )
@@ -51,10 +52,7 @@ class Parser:
         func = ast.FunctionDef(
             name=name,
             args=ast.arguments(
-                args=[
-                    ast.arg(arg='self', annotation=None),
-                    ast.arg(arg='context', annotation=None),
-                ],
+                args=_a.args('self', 'context'),
                 vararg=None,
                 kwonlyargs=[],
                 kwarg=None,

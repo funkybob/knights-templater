@@ -65,3 +65,6 @@ And the results on my MacBook Air are:
     jinja2            12316   8119     279     47
     knights            5633  17754     240     26
     wheezy.template    1428  70028     107     19
+
+* Note: wheezy.html has a C-optimised version of escape().
+  When not used it can impact their render speed from 20 to 50 %

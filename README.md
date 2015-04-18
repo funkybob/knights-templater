@@ -24,44 +24,44 @@ https://bitbucket.org/funkybob/helloworld
 
 And the results on my MacBook Air are:
 
-    $ python benchmark.py
+    $ python -OO benchmark.py
 
     len(items) == 0
 
     01-initial         msec    rps  tcalls  funcs
-    django             8416  11882     173     56
-    jinja2             1282  78003      29     23
-    knights             382 261828      23      9
-    wheezy.template     223 447869      15      9
+    django             8087  12366     171     54
+    jinja2             1278  78221      29     23
+    knights             447 223834      21     10
+    wheezy.template     243 412161      15      9
 
     02-include         msec    rps  tcalls  funcs
-    django            18398   5435     395     67
-    jinja2             7003  14279     113     41
-    knights            1360  73505      35      9
-    wheezy.template     527 189631      30     14
+    django            17567   5692     393     66
+    jinja2             7099  14086     113     41
+    knights            1256  79601      44     18
+    wheezy.template     506 197726      30     14
 
     03-extends         msec    rps  tcalls  funcs
-    django            34262   2919     632     84
-    jinja2             9781  10224     166     47
-    knights            1690  59162      39     12
-    wheezy.template     851 117446      48     19
+    django            30714   3256     630     83
+    jinja2             8980  11136     166     47
+    knights            1564  63955      58     21
+    wheezy.template     824 121397      48     19
 
     len(items) == 10
 
     01-initial         msec    rps  tcalls  funcs
-    django            55839   1791    1209     60
-    jinja2             5049  19808     120     23
-    knights            5140  19456     151     12
-    wheezy.template     893 111948      74      9
+    django            51815   1930    1237     58
+    jinja2             4595  21764     120     23
+    knights            4219  23700     154     15
+    wheezy.template     809 123645      74      9
 
     02-include         msec    rps  tcalls  funcs
-    django            64784   1544    1431     71
-    jinja2            10741   9310     204     41
-    knights            6339  15776     163     12
-    wheezy.template    1171  85428      89     14
+    django            62515   1600    1459     70
+    jinja2            10550   9479     204     41
+    knights            5059  19767     177     23
+    wheezy.template    1093  91488      89     14
 
     03-extends         msec    rps  tcalls  funcs
-    django            76842   1301    1668     87
-    jinja2            12695   7877     279     47
-    knights            7101  14082     102     15
-    wheezy.template    1538  65006     107     19
+    django            77127   1297    1696     86
+    jinja2            12316   8119     279     47
+    knights            5633  17754     240     26
+    wheezy.template    1428  70028     107     19

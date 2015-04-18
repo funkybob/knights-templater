@@ -9,28 +9,11 @@ from .library import Library
 register = Library()
 
 
-def stringfilter(func):
-    """
-    Decorator for filters which should only receive unicode objects. The object
-    passed as the first positional argument will be converted to a unicode
-    object.
-    """
-    @wraps(func)
-    def _dec(*args, **kwargs):
-        if args:
-            args = list(args)
-            args[0] = str(args[0])
-        return func(*args, **kwargs)
-
-    return _dec
-
-
 # add
 # addslashes
 
 
 @register.helper
-@stringfilter
 def addslashes(value):
     return value.replace('\\', '\\\\').replace('"', '\\"').replace("'", "\\'")
 
@@ -38,7 +21,6 @@ def addslashes(value):
 
 
 @register.helper
-@stringfilter
 def capfirst(value):
     return value and value[0].upper() + value[1:]
 
@@ -60,7 +42,6 @@ ESCAPES = {
 
 
 @register.helper
-@stringfilter
 def escape(value, mode='html'):
     return ESCAPES[mode](value)
 

@@ -48,8 +48,10 @@ def kompile(src, debug=False, raw=False, filename='<compiler>'):
                     args=[
                         _a.Call(_a.Name('map'), [
                             _a.Name('str'),
-                            _a.Call(_a.Attribute(_a.Name('self'), '_root'),
-                                    [_a.Name('context')]),
+                            _a.Call(_a.Attribute(_a.Name('self'), '_root'), [
+                                _a.Name('context'),
+                                _a.Name('_'),
+                            ]),
                         ]),
                     ],
                 )

@@ -52,7 +52,7 @@ class Parser:
         func = ast.FunctionDef(
             name=name,
             args=ast.arguments(
-                args=_a.args('self', 'context'),
+                args=_a.args('self', 'context', '_'),
                 vararg=None,
                 kwonlyargs=[],
                 kwarg=None,

@@ -25,7 +25,10 @@ def block(parser, token):
     name = token.strip()
     parser.build_method(name, endnodes=['endblock'])
     return ast.YieldFrom(
-        value=_a.Call(_a.Attribute(_a.Name('self'), name), [_a.Name('context')])
+        value=_a.Call(_a.Attribute(_a.Name('self'), name), [
+            _a.Name('context'),
+            _a.Name('_'),
+        ])
     )
 
 

@@ -21,6 +21,8 @@ https://bitbucket.org/funkybob/helloworld
 
 - Django (1.8)
 - Jinja2 (2.7.3)
+- wheezy.html (0.1.147)
+- wheezy.template (0.1.160)
 
 And the results on my MacBook Air are:
 

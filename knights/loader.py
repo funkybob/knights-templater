@@ -29,7 +29,7 @@ def load_template(name, paths=None, raw=False):
             with open(full_name, encoding='utf-8') as fin:
                 src = fin.read()
 
-            return kompile(src, raw=raw, filename=name)
+            return kompile(src, raw=raw, filename=full_name)
         except FileNotFoundError:
             pass
     else:

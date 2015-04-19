@@ -45,6 +45,9 @@ ESCAPES = {
 def escape(value, mode='html'):
     return ESCAPES[mode](value)
 
+register.helper(escape_html)
+register.helper(escape_js)
+
 # filesizeformat
 # first
 # fix_ampersands

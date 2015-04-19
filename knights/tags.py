@@ -117,11 +117,9 @@ def do_for(parser, token):
     ]
 
     # Insert our update call at the start of the loop body
-    body.insert(0,
-        ast.Expr(
-            value=_a.Call(_a.Attribute(_a.Name('context'), 'update'), keywords=kwargs)
-        )
-    )
+    body.insert(0, ast.Expr(
+        value=_a.Call(_a.Attribute(_a.Name('context'), 'update'), keywords=kwargs)
+    ))
     loop.body = body
 
     node = _create_with_scope([loop], [])

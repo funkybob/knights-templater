@@ -6,6 +6,7 @@ In the majority of cases they allow for positional arguments, and provide
 sane/common defaults
 '''
 
+
 def args(*names):
     return [
         ast.arg(arg=name, annotation=None)

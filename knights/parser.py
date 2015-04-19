@@ -104,7 +104,7 @@ class Parser:
         return ast.ClassDef(
             name='Template',
             bases=[
-                ast.Name(id='parent' if self.parent else 'object', ctx=ast.Load())
+                _a.Name('parent' if self.parent else 'object')
             ],
             body=self.methods,
             keywords=[],

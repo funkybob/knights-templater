@@ -6,9 +6,9 @@ TokenType = Enum('Token', 'comment text var block',)
 
 tag_re = re.compile(
     '|'.join([
-        r'{%\s*(?P<block>.+?)\s*%}',
-        r'{{\s*(?P<var>.+?)\s*}}',
-        r'{#\s*(?P<comment>.+?)\s*#}'
+        r'{%(-?)\s*(?P<block>.+?)\s*(-?)%}',
+        r'{{(-?)\s*(?P<var>.+?)\s*(-?)}}',
+        r'{#(-?)\s*(?P<comment>.+?)\s*(-?)#}'
     ]),
     re.DOTALL
 )
@@ -17,10 +17,12 @@ tag_re = re.compile(
 class Token:
     __slots__ = ('mode', 'content', 'lineno')
 
-    def __init__(self, mode, content, lineno=None):
+    def __init__(self, mode, content, strip_mode, lineno=None):
         self.mode = mode
         self.content = content
         self.lineno = lineno
+        self.strip_left = bool(strip_mode[0])
+        self.strip_right = bool(strip_mode[1])
 
 
 def tokenise(template):
@@ -38,9 +40,10 @@ def tokenise(template):
             yield Token(TokenType.text, template[upto:start], lineno)
         upto = end
 
-        mode = m.lastgroup
-        content = m.group(m.lastgroup)
-        yield Token(TokenType[mode], content, lineno)
+        # The middle value here is actually content
+        lstrip, _, rstrip = m.groups()
+        mode, content = list(m.groupsdict().items())[0]
+        yield Token(TokenType[mode], content, (lstrip, rstrip), lineno)
 
     # if the last match ended before the end of the source, we have a tail Text
     # node.

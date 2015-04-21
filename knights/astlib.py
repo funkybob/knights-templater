@@ -7,6 +7,15 @@ sane/common defaults
 '''
 
 
+def arguments(args=[], vararg=None, kwonlyargs=[], kwarg=None, defaults=[],
+              kw_defaults=[]):
+
+    return ast.arguments(args=args, vararg=vararg, kwonlyargs=kwonlyargs,
+                         kwarg=kwarg, defaults=defaults,
+                         kw_defaults=kw_defaults
+                         )
+
+
 def args(*names):
     return [
         ast.arg(arg=name, annotation=None)

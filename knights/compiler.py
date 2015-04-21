@@ -1,18 +1,20 @@
 import ast
 
-from . import astlib as _a
 from .context import ContextScope
 from .parser import Parser
 from .utils import Helpers
 
 
-def kompile(src, debug=False, raw=False, filename='<compiler>'):
+def kompile(src, raw=False, filename='<compiler>'):
     '''
     Creates a new class based on the supplied template, and returnsit.
 
     class Template(object):
         def __call__(self, context):
-            return ''.join(map(str, self._root(context)))
+            return ''.join(self._iterator(context))
+
+        def _iterator(self, context):
+            return map(str, self._root(context)
 
         def _root(self, context):
             yield ''
@@ -28,38 +30,6 @@ def kompile(src, debug=False, raw=False, filename='<compiler>'):
     parser.load_library('knights.tags')
     parser.load_library('knights.helpers')
 
-    # Define the __call__ method
-    # return ''.join(str(x) for x in self._root(context))
-    func = ast.FunctionDef(
-        name='__call__',
-        args=ast.arguments(
-            args=_a.args('self', 'context'),
-            vararg=None,
-            kwonlyargs=[],
-            kwarg=None,
-            defaults=[],
-            kw_defaults=[],
-        ),
-        body=[
-
-            ast.Return(
-                value=_a.Call(
-                    _a.Attribute(ast.Str(s=''), 'join'),
-                    args=[
-                        _a.Call(_a.Name('map'), [
-                            _a.Name('str'),
-                            _a.Call(_a.Attribute(_a.Name('self'), '_root'),
-                                    [_a.Name('context')]),
-                        ]),
-                    ],
-                )
-            ),
-
-        ],
-        decorator_list=[],
-    )
-
-    parser.methods.append(func)
     parser.build_method('_root')
 
     if parser.parent:
@@ -67,6 +37,7 @@ def kompile(src, debug=False, raw=False, filename='<compiler>'):
         parser.methods = [
             method for method in parser.methods if method.name != '_root'
         ]
+
     klass = parser.build_class()
 
     # Wrap it in a module
@@ -74,9 +45,6 @@ def kompile(src, debug=False, raw=False, filename='<compiler>'):
 
     ast.fix_missing_locations(inst)
 
-    if debug:
-        import astpp
-        print(astpp.dump(inst))
     # Compile code to create class
     code = compile(inst, filename=filename, mode='exec', optimize=2)
 

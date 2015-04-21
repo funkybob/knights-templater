@@ -38,6 +38,64 @@ class Parser:
         self.tags.update(module.register.tags)
         self.helpers.update(module.register.helpers)
 
+    def build_class(self):
+        cls = ast.ClassDef(
+            name='Template',
+            bases=[
+                _a.Name('parent' if self.parent else 'object')
+            ],
+            body=self.methods,
+            keywords=[],
+            starargs=None,
+            kwargs=None,
+            decorator_list=[]
+        )
+
+        cls.body.extend([
+
+            # def _iterator(self, contetxt):
+            #     return map(str, self._root(context))
+            ast.FunctionDef(
+                name='_iterator',
+                args=_a.arguments(_a.args('self', 'context')),
+                body=[
+                    ast.Return(
+                        value=_a.Call(_a.Name('map'), [
+                            _a.Name('str'),
+                            _a.Call(_a.Attribute(_a.Name('self'), '_root'), [
+                                _a.Name('context'),
+                            ]),
+                        ])
+                    )
+                ],
+                decorator_list=[],
+            ),
+
+            # def __call__(self, context):
+            #     return ''.join(self._iterator(context))
+            ast.FunctionDef(
+                name='__call__',
+                args=_a.arguments(_a.args('self', 'context')),
+                body=[
+                    ast.Return(
+                        value=_a.Call(
+                            _a.Attribute(ast.Str(s=''), 'join'),
+                            args=[
+                                _a.Call(
+                                    _a.Attribute(_a.Name('self'), '_iterator'),
+                                    [_a.Name('context')]
+                                ),
+                            ],
+                        )
+                    ),
+                ],
+                decorator_list=[],
+            ),
+
+        ])
+
+        return cls
+
     def build_method(self, name, endnodes=None):
         # Build the body
         if endnodes:
@@ -51,14 +109,7 @@ class Parser:
         # Create the method
         func = ast.FunctionDef(
             name=name,
-            args=ast.arguments(
-                args=_a.args('self', 'context'),
-                vararg=None,
-                kwonlyargs=[],
-                kwarg=None,
-                defaults=[],
-                kw_defaults=[],
-            ),
+            args=_a.arguments(_a.args('self', 'context')),
             body=body,
             decorator_list=[],
         )
@@ -99,19 +150,6 @@ class Parser:
         if not isinstance(end, str):
             raise SyntaxError('Did not find end node %e - found %r instead' % (endnodes, end))
         return nodes, end
-
-    def build_class(self):
-        return ast.ClassDef(
-            name='Template',
-            bases=[
-                _a.Name('parent' if self.parent else 'object')
-            ],
-            body=self.methods,
-            keywords=[],
-            starargs=None,
-            kwargs=None,
-            decorator_list=[]
-        )
 
     def parse_expression(self, expr):
         code = ast.parse(expr, mode='eval')

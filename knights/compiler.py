@@ -5,13 +5,16 @@ from .parser import Parser
 from .utils import Helpers
 
 
-def kompile(src, debug=False, raw=False, filename='<compiler>'):
+def kompile(src, raw=False, filename='<compiler>'):
     '''
     Creates a new class based on the supplied template, and returnsit.
 
     class Template(object):
         def __call__(self, context):
-            return ''.join(map(str, self._root(context)))
+            return ''.join(self._iterator(context))
+
+        def _iterator(self, context):
+            return map(str, self._root(context)
 
         def _root(self, context):
             yield ''
@@ -42,9 +45,6 @@ def kompile(src, debug=False, raw=False, filename='<compiler>'):
 
     ast.fix_missing_locations(inst)
 
-    if debug:
-        import astpp
-        print(astpp.dump(inst))
     # Compile code to create class
     code = compile(inst, filename=filename, mode='exec', optimize=2)
 

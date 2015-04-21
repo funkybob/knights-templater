@@ -49,8 +49,15 @@ Load a template from a directory:
    >>> from knights import loader
    >>> loader.add_path('templates/')
    >>> tmpl = loader.load_template('index.html')
-   >>> tmpl.render({....})
+   >>> tmpl({....})
    ...
+
+Since WSGI wants an iterable for its content:
+
+.. code-block:: python
+
+   >>> content = tmpl.iterator(context)
+
 
 Thanks
 ======

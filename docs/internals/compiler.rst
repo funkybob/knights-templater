@@ -8,11 +8,9 @@ Contains the main compilation function for driving template construction.
 To avoid clashing with the built-in `compile` this method is called `kompile`.
 
 
-.. py:function:: kompile(source, debug=False, raw=False)
+.. py:function:: kompile(source, raw=False)
 
    Compiles a template from the provided source string.
-
-   If ``debug`` is True it will dump the AST used to compile the class.
 
    If ``raw`` is True, the template class will be returned, not an instance.
 

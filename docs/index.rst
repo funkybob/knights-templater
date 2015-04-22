@@ -67,4 +67,8 @@ Many thanks to Markus Holterman for soundboarding for all my ideas.
 
 See `Green Tree Snakes`_ for an excellent introductin to Python AST.
 
+Logo provided by `Cherry Jam`_
+
 .. _Green Tree Snakes: https://greentreesnakes.readthedocs.org/en/latest/
+
+.. _Cherry Jam: http://www.cherryjam.com.au/

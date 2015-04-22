@@ -2,7 +2,7 @@
    sphinx-quickstart on Sat Mar 28 13:12:00 2015.
 
 .. image:: _static/knightstemplater.svg
-   :width: 20%
+   :width: 40%
    :align: center
 
 Contents:

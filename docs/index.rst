@@ -57,7 +57,7 @@ Since WSGI wants an iterable for its content:
 
 .. code-block:: python
 
-   >>> content = tmpl.iterator(context)
+   >>> content = tmpl._iterator(context)
 
 
 Thanks

@@ -1,10 +1,9 @@
 .. Knights Templater documentation master file, created by
    sphinx-quickstart on Sat Mar 28 13:12:00 2015.
-   You can adapt this file completely to your liking, but it should at least
-   contain the root `toctree` directive.
 
-Welcome to Knights Templater's documentation!
-=============================================
+.. image:: _static/knightstemplater.svg
+   :width: 20%
+   :align: center
 
 Contents:
 
@@ -16,6 +15,8 @@ Contents:
    tags
    library
 
+   internals/index
+
 Requirements
 ============
 
@@ -24,7 +25,7 @@ Python 3.4+
 Introduction
 ============
 
-Knights Templater is a light-weight, super-fast template engine which compile
+Knights Templater is a light-weight, super-fast template engine which compiles
 your templates into Python classes.
 
 The syntax is based on Django's DTL, but as it allows raw Python the need for

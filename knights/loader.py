@@ -1,10 +1,14 @@
+from __future__ import unicode_literals
 
+import codecs
 import os.path
 
 from .compiler import kompile
 
 PATHS = []
 
+# Py3.3 introduces:
+FileNotFoundError = OSError
 
 class TemplateNotFound(Exception):
     pass
@@ -26,9 +30,9 @@ def load_template(name, paths=None, raw=False):
         if not full_name.startswith(path):
             continue
         try:
-            with open(full_name, encoding='utf-8') as fin:
+            with codecs.open(full_name, encoding='utf-8') as fin:
                 src = fin.read()
-
+            
             return kompile(src, raw=raw, filename=full_name)
         except FileNotFoundError:
             pass

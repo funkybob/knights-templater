@@ -1,3 +1,5 @@
+from __future__ import unicode_literals
+
 
 import ast
 
@@ -24,10 +26,13 @@ def extends(parser, token):
 def block(parser, token):
     name = token.strip()
     parser.build_method(name, endnodes=['endblock'])
-    return ast.YieldFrom(
-        value=_a.Call(_a.Attribute(_a.Name('self'), name), [
-            _a.Name('context'),
-        ])
+    return ast.For(
+        target=_a.Name('a', ctx=Store()),
+        iter=_a.Call(_a.Attribute(_a.Name('self'), 'block'), args=[_a.Name('context')]),
+        body=[
+            ast.Expr(value=ast.Yield(value=_a.Name('a')))
+        ],
+        orelse=[]
     )
 
 

@@ -1,6 +1,8 @@
 '''
 Default helper functions
 '''
+from __future__ import unicode_literals
+
 from .escape import escape_html, escape_js
 from .library import Library
 

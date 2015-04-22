@@ -1,3 +1,5 @@
+from __future__ import unicode_literals
+
 import ast
 from importlib import import_module
 
@@ -139,14 +141,15 @@ class Parser:
 
             if node is None:
                 continue
-            if isinstance(node, (ast.Yield, ast.YieldFrom)):
+            if isinstance(node, ast.Yield):
                 node = ast.Expr(value=node, lineno=token.lineno)
             yield node
 
     def parse_nodes_until(self, *endnodes):
         '''
         '''
-        *nodes, end = list(self.parse_node(endnodes=endnodes))
+        nodes = list(self.parse_node(endnodes=endnodes))
+        end = nodes.pop()
         if not isinstance(end, str):
             raise SyntaxError('Did not find end node %e - found %r instead' % (endnodes, end))
         return nodes, end

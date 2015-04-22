@@ -1,3 +1,5 @@
+from __future__ import unicode_literals
+
 
 class ContextScope(dict):
     __slots__ = ('parent',)

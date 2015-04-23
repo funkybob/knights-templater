@@ -1,3 +1,5 @@
+from collections import defaultdict
+
 from django.template import TemplateDoesNotExist, TemplateSyntaxError  # NOQA
 from django.template.backends.base import BaseEngine
 from django.template.backends.utils import csrf_input_lazy, csrf_token_lazy
@@ -40,4 +42,6 @@ class Template(object):
             context['request'] = request
             context['csrf_input'] = csrf_input_lazy(request)
             context['csrf_token'] = csrf_token_lazy(request)
-        return self.template()(context)
+        ctx = defaultdict(str)
+        ctx.update(context)
+        return self.template(ctx)

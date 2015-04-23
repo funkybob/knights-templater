@@ -1,6 +1,6 @@
 import os
 
-from .utils import TemplateTestCase
+from .utils import TemplateTestCase, Mock
 
 
 class BlockTagTest(TemplateTestCase):
@@ -45,6 +45,12 @@ class ForTagTest(TemplateTestCase):
             {'seq': (1, 2, 3), 'b': 2},
         )
 
+    def test_attr_source(self):
+        self.assertRendered(
+            '{% for a in obj.seq %}{{ a }}{% endfor %}',
+            '1234',
+            {'obj': Mock(seq=[1,2,3,4])},
+        )
 
 class IfTagTest(TemplateTestCase):
     def test_simple_if(self):

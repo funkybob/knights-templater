@@ -118,7 +118,7 @@ def do_for(parser, token):
     # Grab the ast.For node
     loop = code.body[0]
     # Wrap its source iterable
-    loop.iter = wrap_name_in_context(loop.iter)
+    loop.iter = visitor.visit(loop.iter)
 
     # Get the body of the loop
     body, end = parser.parse_nodes_until('endfor', 'empty')

@@ -16,15 +16,15 @@ class KnightsTemplater(BaseEngine):
 
         super(KnightsTemplater, self).__init__(params)
 
-        for path in params.get('DIRS', []):
-            loader.add_path(path)
-
     def from_string(self, template_code):
         tmpl = compiler.kompile(template_code)
         return Template(tmpl)
 
     def get_template(self, template_name):
-        tmpl = loader.load_template(template_name)
+        try:
+            tmpl = loader.load_template(template_name, self.template_dirs)
+        except Exception as e:
+            raise TemplateSyntaxError(e).with_traceback(e.__traceback__)
         if tmpl is None:
             raise TemplateDoesNotExist(template_name)
         return Template(tmpl)
@@ -39,6 +39,7 @@ class Template(object):
         if context is None:
             context = {}
         if request is not None:
+            context['user'] = request.user
             context['request'] = request
             context['csrf_input'] = csrf_input_lazy(request)
             context['csrf_token'] = csrf_token_lazy(request)

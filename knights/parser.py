@@ -15,7 +15,7 @@ def wrap_name_in_context(name):
 
 class VarVisitor(ast.NodeTransformer):
     def visit_Name(self, node):
-        if node.id == '_':
+        if node.id in ['_', 'self']:
             return node
         return wrap_name_in_context(node)
 

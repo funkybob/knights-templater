@@ -16,13 +16,16 @@ class KnightsTemplater(BaseEngine):
 
         super(KnightsTemplater, self).__init__(params)
 
+        for path in self.template_dirs:
+            loader.add_path(path)
+
     def from_string(self, template_code):
         tmpl = compiler.kompile(template_code)
         return Template(tmpl)
 
     def get_template(self, template_name):
         try:
-            tmpl = loader.load_template(template_name, self.template_dirs)
+            tmpl = loader.load_template(template_name)
         except loader.TemplateNotFound:
             raise TemplateDoesNotExist(template_name)
         except Exception as e:

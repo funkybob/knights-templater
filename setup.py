@@ -1,10 +1,13 @@
-from setuptools import setup, find_packages
+from setuptools import setup
 
 
 setup(
     name='knights-templater',
     version='1.0',
-    packages=find_packages(exclude=('tests.*',)),
+    packages=[
+        'knights',
+        'knights.compat',
+    ],
     author='Curtis Maloney',
     author_email='curtis@tinbrain.net',
     description='A simple AST-based Python Template engine.',

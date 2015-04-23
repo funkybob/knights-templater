@@ -20,6 +20,10 @@ def static(parser, token):
 
 
 @register.helper
+def capfirst(value):
+    return value and value[0].upper() + value[1:]
+
+@register.helper
 def safe(value):
     return str(value)
 

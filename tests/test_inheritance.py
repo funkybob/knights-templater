@@ -23,3 +23,16 @@ class InheritanceTestCase(TemplateTestCase):
         t = loader.load_template('inherit_override.html')
         output = t({})
         self.assertEqual(output, 'parent\nchild\n')
+
+
+class SuperTestCase(TemplateTestCase):
+
+    def test_own_super(self):
+        t = loader.load_template('super_own.html')
+        output = t({})
+        self.assertEqual(output, 'child of parent\nother parent\n')
+
+    def test_other_super(self):
+        t = loader.load_template('super_other.html')
+        output = t({})
+        self.assertEqual(output, 'subverting other parent\nother parent\n')

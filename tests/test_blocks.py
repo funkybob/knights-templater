@@ -35,7 +35,7 @@ class ForTagTest(TemplateTestCase):
         self.assertRendered(
             '{% for a, b in seq %}{{ a }} == {{ b }},{% empty %}empty{% endfor %}',
             'empty',
-            {'seq': (),},
+            {'seq': ()},
         )
 
     def test_scope(self):
@@ -44,6 +44,7 @@ class ForTagTest(TemplateTestCase):
             '2 4 6 ',
             {'seq': (1, 2, 3), 'b': 2},
         )
+
 
 class IfTagTest(TemplateTestCase):
     def test_simple_if(self):

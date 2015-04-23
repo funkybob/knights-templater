@@ -17,6 +17,8 @@ Contents:
 
    internals/index
 
+   changelog
+
 Requirements
 ============
 

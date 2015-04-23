@@ -11,9 +11,9 @@ class Mock(object):
 
 class TemplateTestCase(unittest.TestCase):
 
-    def assertRendered(self, source, expected, context=None, debug=False):
+    def assertRendered(self, source, expected, context=None):
         try:
-            tmpl = compiler.kompile(source, debug=debug)
+            tmpl = compiler.kompile(source)
             rendered = tmpl({} if context is None else context)
             self.assertEqual(rendered, expected)
         except Exception as e:

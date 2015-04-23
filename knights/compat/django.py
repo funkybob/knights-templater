@@ -1,5 +1,9 @@
 import ast
 
+from django.core.urlresolvers import reverse
+
+import datetime
+
 from knights.library import Library
 
 register = Library()
@@ -18,3 +22,15 @@ def static(parser, token):
 @register.helper
 def safe(value):
     return str(value)
+
+
+@register.helper
+def now(fmt):
+    return datetime.datetime.now().strftime(fmt)
+
+@register.helper
+def url(name, *args, **kwargs):
+    try:
+        return reverse(name, args=args, kwargs=kwargs)
+    except:
+        return None

@@ -24,6 +24,14 @@ Default tags.
 
    Make this Template class extend the template in ``name``
 
+.. py:function:: super name
+
+   .. code-block:: html
+
+      {% super blockname %}
+
+   Renders the contents of ``blockname`` from the parent template.
+
 .. py:function:: block name
 
    .. code-block:: html

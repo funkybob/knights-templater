@@ -147,8 +147,8 @@ class Parser:
         '''
         '''
         *nodes, end = list(self.parse_node(endnodes=endnodes))
-        if not isinstance(end, str):
-            raise SyntaxError('Did not find end node %e - found %r instead' % (endnodes, end))
+        if end not in endnodes:
+            raise SyntaxError('Did not find end node %r - found %r instead' % (endnodes, end))
         return nodes, end
 
     def parse_expression(self, expr):

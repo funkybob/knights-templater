@@ -48,7 +48,7 @@ def kompile(src, raw=False, filename='<compiler>'):
     ast.fix_missing_locations(inst)
 
     # Compile code to create class
-    code = compile(inst, filename=filename, mode='exec', optimize=2)
+    code = compile(inst, filename=filename, mode='exec')
 
     # Execute it and return the instance
     g = {

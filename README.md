@@ -8,7 +8,10 @@ Python.
 
 # Requirements
 
-Python 3.4+
+This "legacy" branch attempts to retain compatibility with Python versions older than 3.4
+
+Python 2.7/3.2+
+Enum34
 
 # Benchmarks
 

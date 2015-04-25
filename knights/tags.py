@@ -1,6 +1,5 @@
 from __future__ import unicode_literals
 
-
 import ast
 
 from . import astlib as _a
@@ -27,7 +26,7 @@ def block(parser, token):
     name = token.strip()
     parser.build_method(name, endnodes=['endblock'])
     return ast.For(
-        target=_a.Name('a', ctx=Store()),
+        target=_a.Name('a', ctx=ast.Store()),
         iter=_a.Call(_a.Attribute(_a.Name('self'), 'block'), args=[_a.Name('context')]),
         body=[
             ast.Expr(value=ast.Yield(value=_a.Name('a')))
@@ -73,17 +72,13 @@ def _create_with_scope(body, kwargs):
     with ContextScope(context, **kwargs) as context:
         ... body ...
     '''
-    return ast.With(
-        items=[
-            ast.withitem(
-                context_expr=_a.Call(
-                    _a.Name('ContextScope'),
-                    [_a.Name('context')],
-                    keywords=kwargs,
-                ),
-                optional_vars=_a.Name('context', ctx=ast.Store())
-            ),
-        ],
+    return _a.With(
+        context_expr=_a.Call(
+            _a.Name('ContextScope'),
+            [_a.Name('context')],
+            keywords=kwargs,
+        ),
+        optional_vars=_a.Name('context', ctx=ast.Store()),
         body=body,
     )
 

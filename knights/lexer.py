@@ -1,24 +1,11 @@
 from __future__ import unicode_literals
 
+from enum import Enum
+
 import re
 
-TOKEN_COMMENT = 0
-TOKEN_TEXT = 1
-TOKEN_VAR = 2
-TOKEN_BLOCK = 3
+TokenType = Enum('Token', 'comment text var block',)
 
-class _TokenType(dict):
-    def __init__(self):
-        super(_TokenType, self).__init__({
-            'comment': TOKEN_COMMENT,
-            'text': TOKEN_TEXT,
-            'var': TOKEN_VAR,
-            'block': TOKEN_BLOCK,
-        })
-        for key, value in self.items():
-            setattr(self, key, value)
-
-TokenType = _TokenType()
 
 tag_re = re.compile(
     '|'.join([

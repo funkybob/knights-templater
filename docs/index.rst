@@ -10,6 +10,8 @@ Contents:
 .. toctree::
    :maxdepth: 2
 
+   tutorial/index
+
    loader
    helpers
    tags

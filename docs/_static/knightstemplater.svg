@@ -61,9 +61,9 @@
 		<line stroke="#808080" stroke-miterlimit="10" x1="493.2" y1="548" x2="496.4" y2="502"/>
 		<path fill="#4D4D4D" stroke="#808080" stroke-miterlimit="10" d="M501,69.8c0,0,27.9-24.6,34.3-0.3c0,0-4.5,25.7,2.7,25.7
 			s-17.4,7.3-18.1-17.4c0,0-10.9,26.1,4.4,28.3c0,0-23.9-3.6-22.5-23.9C501.8,82.2,493.1,80,501,69.8z"/>
-		
+
 			<ellipse transform="matrix(0.9814 -0.1922 0.1922 0.9814 -15.9901 103.2516)" stroke="#808080" stroke-miterlimit="10" cx="524.3" cy="134.1" rx="7.6" ry="11.6"/>
-		
+
 			<ellipse transform="matrix(0.9792 -0.2027 0.2027 0.9792 -13.5981 117.9197)" stroke="#808080" stroke-miterlimit="10" cx="568.9" cy="125.3" rx="7.6" ry="11.6"/>
 		<path fill="none" stroke="#808080" stroke-miterlimit="10" d="M540.8,262.3c-50.4-10-54.1-59.6-54.1-59.6"/>
 		<path fill="#4D4D4D" stroke="#808080" stroke-miterlimit="10" d="M487.5,82.5c0,0-10.9-16.7-5.8-22.5c0,0,10.5,4,12.7,13.4
@@ -80,14 +80,12 @@
 			c0,0-13.9,64.3-8.6,79.3s-108.2,60.5-118.9,56.2s-290.2-23-291.3-28.4s-11.8-123.7,6.4-157.4c0,0,28.9-91,84.6-93.2
 			C247.9,246.5,303.6,231.6,367.9,256.2z"/>
 		<g>
-			<polygon fill="#FFFFFF" stroke="#808080" stroke-miterlimit="10" points="386.7,351.1 331.6,362.9 353.8,309.2 306.4,305 
+			<polygon fill="#FFFFFF" stroke="#808080" stroke-miterlimit="10" points="386.7,351.1 331.6,362.9 353.8,309.2 306.4,305
 				319.5,361.2 265.1,340.3 260.9,387.8 316.9,377.6 295.2,431.4 342.6,435.6 331.6,378 382.5,398.5 			"/>
 		</g>
 	</g>
 </g>
 <g id="Layer_3">
-	<g id="Layer_2">
-	</g>
 	<path opacity="5.000000e-02" stroke="#000000" stroke-miterlimit="10" d="M533.9,68.4l5.4,1c0,0,2.1-23.6,7.5-23.6
 		c5.4,0,26.8,24.7,9.6,31.1c0,0,24.6,14.6,24.6,38.6s-4.3,0-4.3,0s35.3,50.1,27.8,68.3c0,0,36.4,43.9,0,62.1
 		c0,0-20.3,20.4-34.3,18.2c0,0-39.6-2.1-41.8-6.4C526.4,253.5,656,259.9,533.9,68.4z"/>
@@ -108,11 +106,11 @@
 		c0,0-298.8-21.4-300.9-25.7C153.7,498.8,600.3,460.2,556.4,286.7z"/>
 	<path opacity="7.000000e-02" d="M327.2,307.1l25.7,2.1l-21.4,54.6l54.6-11.8l-3.2,47.1l-51.4-20.3l11.2,57.3c0,0-35.9-4.3-31.1-1.6
 		C316.5,437.2,339,334.9,327.2,307.1z"/>
-	
+
 		<text transform="matrix(1.1413 0 0 1 3.8071 41.1026)" fill="#0071BC" stroke="#0071BC" stroke-width="0.5" stroke-miterlimit="10" font-family="'DJBHollyBerryWonderland'" font-size="32.7039">The</text>
-	
+
 		<text transform="matrix(1.1413 0 0 1 4.0625 109.3906)" fill="#0071BC" stroke="#0071BC" stroke-width="0.5" stroke-miterlimit="10" font-family="'DJBHollyBerryWonderland'" font-size="53.5713">Knights</text>
-	
+
 		<text transform="matrix(1.1413 0 0 1 3.8071 173.084)" fill="#0071BC" stroke="#0071BC" stroke-width="0.5" stroke-miterlimit="10" font-family="'DJBHollyBerryWonderland'" font-size="53.5713">Templater</text>
 	<g>
 		<path fill="none" stroke="#006837" stroke-miterlimit="10" d="M544.2,535.1c1.2,10,1.4,20.2,0.5,30.3"/>
@@ -161,7 +159,5 @@
 		<path fill="none" stroke="#0071BC" stroke-width="2" stroke-miterlimit="10" d="M186.6,211.4c0,0,38.9,31.8,45.4-1.1
 			c6.5-32.9-83.5,5.7-83.5,5.7"/>
 	</g>
-</g>
-<g id="Layer_4">
 </g>
 </svg>

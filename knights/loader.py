@@ -20,6 +20,8 @@ def add_path(path):
 def load_template(name, paths=None, raw=False):
     if paths is None:
         paths = PATHS[:]
+    else:
+        paths = [os.path.abspath(path) for path in paths]
 
     for path in paths:
         full_name = os.path.abspath(os.path.join(path, name))

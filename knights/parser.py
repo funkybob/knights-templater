@@ -72,7 +72,7 @@ class Parser:
             ),
 
             # def __call__(self, context):
-            #     return ''.join(self._iterator(context))
+            #     return ''.join(map(str, self._root(context)))
             ast.FunctionDef(
                 name='__call__',
                 args=_a.arguments(_a.args('self', 'context')),
@@ -81,10 +81,12 @@ class Parser:
                         value=_a.Call(
                             _a.Attribute(ast.Str(s=''), 'join'),
                             args=[
-                                _a.Call(
-                                    _a.Attribute(_a.Name('self'), '_iterator'),
-                                    [_a.Name('context')]
-                                ),
+                                _a.Call(_a.Name('map'), [
+                                    _a.Name('str'),
+                                    _a.Call(_a.Attribute(_a.Name('self'), '_root'), [
+                                        _a.Name('context'),
+                                    ]),
+                                ]),
                             ],
                         )
                     ),

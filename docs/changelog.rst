@@ -1,6 +1,16 @@
+1.2 (2015-??-??)
+----------------
 
-1.0.1 (2015-04-28)
-------------------
+Syntax Changes
+
++ Make ``extends`` and ``load`` require string argument.
+
+Optimisations
+
++ Inline _iterable into __call__
+
+1.1 (2015-04-28)
+----------------
 
 Features:
 
@@ -17,7 +27,7 @@ Fixes:
 - Don't look up 'self' through context
 - Fixed non-trivial for source values
 
-1.0.0 (2015-04-20)
-------------------
+1.0 (2015-04-20)
+----------------
 
 Initial release.

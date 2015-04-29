@@ -10,7 +10,11 @@ register = Library()
 
 @register.tag
 def load(parser, token):
-    parser.load_library(token)
+    args, kwargs = parser.parse_args(token)
+    assert len(args) == 1, '"load" tag takes only one argument.'
+    assert isinstance(args[0], ast.Str), 'First argument to "load" tag must be a string'
+
+    parser.load_library(args[0].s)
 
 
 @register.tag

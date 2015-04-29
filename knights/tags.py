@@ -16,7 +16,12 @@ def load(parser, token):
 @register.tag
 def extends(parser, token):
     from .loader import load_template
-    parent = load_template(token, raw=True)
+
+    args, kwargs = parser.parse_args(token)
+    assert len(args) == 1, '"extends" tag takes only one argument.'
+    assert isinstance(args[0], ast.Str), 'First argument to "extends" tag must be a string'
+
+    parent = load_template(args[0].s, raw=True)
     parser.parent = parent
 
 

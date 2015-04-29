@@ -1,4 +1,3 @@
-import ast
 
 from django.core.urlresolvers import reverse
 from django.utils.encoding import iri_to_uri
@@ -30,5 +29,5 @@ def static(filename):
     except ImportError:
         prefix = ''
     else:
-        prefix = iri_to_uri(getattr(settings, name, ''))
+        prefix = iri_to_uri(getattr(settings, filename, ''))
     return prefix

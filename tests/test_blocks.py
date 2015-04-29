@@ -49,8 +49,9 @@ class ForTagTest(TemplateTestCase):
         self.assertRendered(
             '{% for a in obj.seq %}{{ a }}{% endfor %}',
             '1234',
-            {'obj': Mock(seq=[1,2,3,4])},
+            {'obj': Mock(seq=[1, 2, 3, 4])},
         )
+
 
 class IfTagTest(TemplateTestCase):
     def test_simple_if(self):

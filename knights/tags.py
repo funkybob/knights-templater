@@ -2,7 +2,7 @@
 import ast
 
 from . import astlib as _a
-from .parser import wrap_name_in_context, visitor
+from .parser import visitor
 from .library import Library
 
 register = Library()

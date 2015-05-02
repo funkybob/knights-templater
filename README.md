@@ -19,8 +19,13 @@ support.
 
 https://bitbucket.org/funkybob/helloworld
 
+Using Python 3.4.3 from brew
+
 - Django (1.8)
 - Jinja2 (2.7.3)
+- Mako (1.0.1)
+- Tenjin (1.1.1)
+- tornado (4.1)
 - wheezy.html (0.1.147)
 - wheezy.template (0.1.160)
 

@@ -1,17 +1,16 @@
 
-def escape_html(text):
-    return (
-        text.replace('&', '&amp;')
-            .replace("<", "&lt;")
-            .replace(">", "&gt;")
-            .replace('"', "&quot;")
-            .replace('\'', "&#x27;")
-    )
+escape_html = lambda text: (
+    text.replace('&', '&amp;')
+        .replace("<", "&lt;")
+        .replace(">", "&gt;")
+        .replace('"', "&quot;")
+        .replace("'", "&#x27;")
+)
 
 
 _js_escapes = {
     ord('\\'): '\\u005C',
-    ord('\''): '\\u0027',
+    ord("'"): '\\u0027',
     ord('"'): '\\u0022',
     ord('>'): '\\u003E',
     ord('<'): '\\u003C',
@@ -27,5 +26,4 @@ _js_escapes = {
 _js_escapes.update((ord('%c' % z), '\\u%04X' % z) for z in range(32))
 
 
-def escape_js(text):
-    return text.translate(_js_escapes)
+escape_js = lambda text: text.translate(_js_escapes)

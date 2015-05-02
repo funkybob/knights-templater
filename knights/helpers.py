@@ -27,5 +27,7 @@ ESCAPES = {
 def escape(value, mode='html'):
     return ESCAPES[mode](value)
 
-register.helper(escape_html)
-register.helper(escape_js)
+
+# Lambda's have no names
+register.helper(escape_html, name='escape_html')
+register.helper(escape_js, name='escape_js')

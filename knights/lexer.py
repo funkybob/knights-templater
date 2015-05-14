@@ -29,6 +29,7 @@ class Token:
 def tokenise(template):
     '''A generator which yields Token instances'''
     upto = 0
+    lineno = 0
 
     for m in tag_re.finditer(template):
 

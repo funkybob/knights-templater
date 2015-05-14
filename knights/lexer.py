@@ -22,6 +22,9 @@ class Token:
         self.content = content
         self.lineno = lineno
 
+    def __repr__(self):
+        return '<Token {}: "{:s}">'.format(self.mode.name, self.content)
+
 
 def tokenise(template):
     '''A generator which yields Token instances'''

@@ -29,12 +29,11 @@ class Token:
 def tokenise(template):
     '''A generator which yields Token instances'''
     upto = 0
-    lineno = 0
 
     for m in tag_re.finditer(template):
 
         start, end = m.span()
-        lineno = template.count('\n', 0, start)
+        lineno = template.count('\n', 0, start) + 1 # Humans count from 1
         # If there's a gap between our start and the end of the last match,
         # there's a Text node between.
         if upto < start:

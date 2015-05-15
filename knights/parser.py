@@ -136,8 +136,6 @@ class Parser:
                     return
                 func = self.tags[tag_name]
                 node = func(self, *bits)
-                if node:
-                    node.lineno = token.lineno
             else:
                 # Must be a comment
                 continue
@@ -145,7 +143,8 @@ class Parser:
             if node is None:
                 continue
             if isinstance(node, (ast.Yield, ast.YieldFrom)):
-                node = ast.Expr(value=node, lineno=token.lineno)
+                node = ast.Expr(value=node)
+            node.lineno = token.lineno
             yield node
 
     def parse_nodes_until(self, *endnodes):

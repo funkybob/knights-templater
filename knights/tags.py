@@ -12,7 +12,8 @@ register = Library()
 def load(parser, token):
     args, kwargs = parser.parse_args(token)
     assert len(args) == 1, '"load" tag takes only one argument.'
-    assert isinstance(args[0], ast.Str), 'First argument to "load" tag must be a string'
+    assert isinstance(args[0], ast.Str), \
+        'First argument to "load" tag must be a string'
 
     parser.load_library(args[0].s)
 
@@ -23,7 +24,8 @@ def extends(parser, token):
 
     args, kwargs = parser.parse_args(token)
     assert len(args) == 1, '"extends" tag takes only one argument.'
-    assert isinstance(args[0], ast.Str), 'First argument to "extends" tag must be a string'
+    assert isinstance(args[0], ast.Str), \
+        'First argument to "extends" tag must be a string'
 
     parent = load_template(args[0].s, raw=True)
     parser.parent = parent
@@ -144,9 +146,10 @@ def do_for(parser, token):
     ]
 
     # Insert our update call at the start of the loop body
-    body.insert(0, ast.Expr(
-        value=_a.Call(_a.Attribute(_a.Name('context'), 'update'), keywords=kwargs)
-    ))
+    body.insert(0, ast.Expr(value=_a.Call(
+        _a.Attribute(_a.Name('context'), 'update'),
+        keywords=kwargs
+    )))
     loop.body = body
 
     node = _create_with_scope([loop], [])
@@ -171,7 +174,8 @@ def do_include(parser, token):
     from .loader import load_template
 
     args, kwargs = parser.parse_args(token)
-    assert isinstance(args[0], ast.Str), "First argument to include tag must be a string"
+    assert isinstance(args[0], ast.Str), \
+        'First argument to "include" tag must be a string'
     template_name = args[0].s
     tmpl = load_template(template_name)
 

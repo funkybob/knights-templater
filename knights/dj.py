@@ -12,7 +12,6 @@ class KnightsTemplater(BaseEngine):
 
     def __init__(self, params):
         params = params.copy()
-        options = params.pop('OPTIONS').copy()
 
         super(KnightsTemplater, self).__init__(params)
 

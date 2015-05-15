@@ -135,7 +135,8 @@ class Parser:
                     return
                 func = self.tags[tag_name]
                 node = func(self, *bits)
-                node.lineno = token.lineno
+                if node:
+                    node.lineno = token.lineno
             else:
                 # Must be a comment
                 continue

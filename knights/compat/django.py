@@ -3,8 +3,6 @@ from django.core.urlresolvers import reverse
 from django.utils import timezone
 from django.utils.encoding import iri_to_uri
 
-import datetime
-
 from knights.library import Library
 
 register = Library()

@@ -1,4 +1,4 @@
-1.2 (2015-??-??)
+1.2 (2015-05-16)
 ----------------
 
 Syntax Changes
@@ -8,6 +8,12 @@ Syntax Changes
 Optimisations
 
 + Inline _iterable into __call__
++ Changed escape_html and escape_js to lambdas
+
+Fixes:
+
+- Count line numbers from 1
+- Set line numbers on all nodes returned from parse_node
 
 1.1 (2015-04-28)
 ----------------

@@ -67,7 +67,7 @@ Since WSGI wants an iterable for its content:
 Thanks
 ======
 
-Many thanks to Markus Holterman for soundboarding for all my ideas.
+Many thanks to Markus Holterman for soundboarding many of my ideas.
 
 See `Green Tree Snakes`_ for an excellent introductin to Python AST.
 

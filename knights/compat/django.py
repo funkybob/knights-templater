@@ -1,8 +1,7 @@
 
 from django.core.urlresolvers import reverse
+from django.utils import timezone
 from django.utils.encoding import iri_to_uri
-
-import datetime
 
 from knights.library import Library
 
@@ -11,7 +10,7 @@ register = Library()
 
 @register.helper
 def now(fmt):
-    return datetime.datetime.now().strftime(fmt)
+    return timezone.now().strftime(fmt)
 
 
 @register.helper

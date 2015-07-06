@@ -5,7 +5,7 @@ from .parser import Parser
 from .utils import Helpers
 
 
-def kompile(src, raw=False, filename='<compiler>'):
+def kompile(src, raw=False, filename='<compiler>', **kwargs):
     '''
     Creates a new class based on the supplied template, and returnsit.
 
@@ -44,6 +44,10 @@ def kompile(src, raw=False, filename='<compiler>'):
     inst = ast.Module(body=[klass])
 
     ast.fix_missing_locations(inst)
+
+    if kwargs.get('astor', False):
+        import astor
+        print(astor.to_source(inst))
 
     # Compile code to create class
     code = compile(inst, filename=filename, mode='exec', optimize=2)

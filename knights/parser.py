@@ -1,4 +1,5 @@
 import ast
+import builtins
 from importlib import import_module
 
 from . import astlib as _a
@@ -15,6 +16,8 @@ def wrap_name_in_context(name):
 
 class VarVisitor(ast.NodeTransformer):
     def visit_Name(self, node):
+        if hasattr(builtins, node.id):
+            return node
         if node.id in ['_', 'self']:
             return node
         return wrap_name_in_context(node)

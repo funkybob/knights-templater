@@ -97,3 +97,6 @@ class VariableSyntaxTest(TemplateTestCase):
         )
         for src, ctx, expect in TESTS:
             self.assertRendered(src, expect, ctx)
+
+    def test_builtin(self):
+        self.assertRendered('{{ ",".join(map(str, [1,2,3,4])) }}', '1, 2, 3, 4')

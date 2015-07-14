@@ -1,3 +1,10 @@
+1.3 (2015-??-??)
+----------------
+
+Fixes:
+
+- Don't resolve builtins via the context
+
 1.2 (2015-05-16)
 ----------------
 

@@ -59,7 +59,7 @@ Default tags.
 
    .. code-block:: html
 
-      {% if ...expre... %}
+      {% if ...expr... %}
       ...
       {% else %}
       ...

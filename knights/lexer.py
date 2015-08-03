@@ -42,7 +42,7 @@ def tokenise(template):
         upto = end
 
         mode = m.lastgroup
-        content = m.group(m.lastgroup)
+        content = m.group(mode)
         yield Token(TokenType[mode], content, lineno)
 
     # if the last match ended before the end of the source, we have a tail Text

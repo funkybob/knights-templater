@@ -100,3 +100,24 @@ class IncludeTagTest(TemplateTestCase):
             '''product: 18\n''',
             {'val': 3}
         )
+
+
+class MacroTagTest(TemplateTestCase):
+
+    def test_macro_does_not_render(self):
+        self.assertRendered(
+            '''{% macro foo %}Foo{% endmacro %}''',
+            '',
+        )
+
+    def test_macro_renders(self):
+        self.assertRendered(
+            '''{% macro foo %}Foo{% endmacro %}{% use "foo" %}''',
+            'Foo',
+        )
+
+    def test_macro_takes_args(self):
+        self.assertRendered(
+            '''{% macro foo %}{{ foo }}{% endmacro %}{% use "foo", foo="bar" %}''',
+            '''bar''',
+        )

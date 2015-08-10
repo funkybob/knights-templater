@@ -212,3 +212,37 @@ def do_with(parser, token):
     action = _create_with_scope(body, kwargs)
 
     return action
+
+
+@register.tag
+def macro(parser, token):
+    '''
+    Works just like block, but does not render.
+    '''
+    name = token.strip()
+    parser.build_method(name, endnodes=['endmacro'])
+    return ast.Yield(value=ast.Str(s=''))
+
+
+@register.tag
+def use(parser, token):
+    '''
+    Counterpart to `macro`, lets you render any block/macro in place.
+    '''
+
+    args, kwargs = parser.parse_args(token)
+    assert isinstance(args[0], ast.Str), \
+        'First argument to "include" tag must be a string'
+    name = args[0].s
+
+    action = ast.YieldFrom(
+        value=_a.Call(_a.Attribute(_a.Name('self'), name), [
+            _a.Name('context'),
+        ])
+    )
+
+    if kwargs:
+        kwargs = _wrap_kwargs(kwargs)
+        return _create_with_scope([ast.Expr(value=action)], kwargs)
+
+    return action

@@ -18,7 +18,7 @@ class VarVisitor(ast.NodeTransformer):
     def visit_Name(self, node):
         if hasattr(builtins, node.id):
             return node
-        if node.id in ['_', 'self']:
+        if node.id in {'_', 'self'}:
             return node
         return wrap_name_in_context(node)
 

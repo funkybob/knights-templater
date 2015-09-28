@@ -2,8 +2,8 @@
 import ast
 
 from . import astlib as _a
-from .parser import visitor
 from .library import Library
+from .parser import visitor
 
 register = Library()
 

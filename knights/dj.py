@@ -1,11 +1,11 @@
 from collections import defaultdict
 
-from django.template.base import TemplateDoesNotExist, TemplateSyntaxError  # NOQA
 from django.template.backends.base import BaseEngine
 from django.template.backends.utils import csrf_input_lazy, csrf_token_lazy
+from django.template.base import (TemplateDoesNotExist,  # NOQA
+                                  TemplateSyntaxError)
 
-from . import compiler
-from . import loader
+from . import compiler, loader
 
 
 class KnightsTemplater(BaseEngine):

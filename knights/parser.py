@@ -22,6 +22,7 @@ class VarVisitor(ast.NodeTransformer):
             return node
         return wrap_name_in_context(node)
 
+
 visitor = VarVisitor()
 
 

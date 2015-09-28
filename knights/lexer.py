@@ -1,5 +1,5 @@
-from enum import Enum
 import re
+from enum import Enum
 
 TokenType = Enum('Token', 'comment text var block',)
 

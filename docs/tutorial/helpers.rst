@@ -10,4 +10,4 @@ Some extra helper functions are available inside the ``_`` object.
    {{ _.escape_html(foo) }}
 
 
-Additional helpers can be loaded using the {% load %} tag.
+Additional helpers can be loaded using the ``{% load %}`` tag.

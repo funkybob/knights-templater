@@ -51,9 +51,9 @@ Load a template from a directory:
 
 .. code-block:: python
 
-   >>> from knights import loader
-   >>> loader.add_path('templates/')
-   >>> tmpl = loader.load_template('index.html')
+   >>> from knights.loader import TemplateLoader
+   >>> loader = TemplateLoader(['templates'])
+   >>> tmpl = loader['index.html']
    >>> tmpl({....})
    ...
 

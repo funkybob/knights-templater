@@ -5,26 +5,27 @@ Loader
 
 Load templates from files.
 
-.. py:attribute:: PATHS
+.. py:class:: TemplateNotFound(Exception)
 
-   A list of PATHS to search for templates.
+   The exception class raised when a template can not be found.
 
-.. py:function:: add_path(path)
+.. py:class:: TemplateLoader(paths)
 
-   Adds a path to the list of Paths to search for templates.
+   Provides a way to load templates from a list of directories.
 
-   First resolves the absolute path of ``path``, then, if it's not already in
-   the list, adds it to PATHS
+   `paths` is a list of paths to search for template files.  Relative paths
+   will be resolved relative to CWD.
 
-   Relative paths are resolved relative to CWD.
+   A TemplateLoader will also act as a cache if accessed as a dict.
 
-.. py:function:: load_template(name, paths=None, raw=False)
+   .. code-block:: python
 
-   Loads and compiles a template from ``name``.
+      >>> loader = TemplateLoader(['templates'])
+      >>> tmpl = loader['index.html']
 
-   Searches paths for a template matching the name.  If ``paths`` is not
-   supplied, it will use ``PATHS``.
+   .. py:method:: load(name, raw=False)
 
-   If a matching file can not be found None is returned.
+      Find the template `name` in one of the `paths` and compile it.
 
-   If ``raw`` is True, the template class will be returned, not an instance.
+      If the `raw` flag is passed, the returned value will be the class, not an
+      instance.

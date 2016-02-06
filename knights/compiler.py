@@ -5,7 +5,7 @@ from .parser import Parser
 from .utils import Helpers
 
 
-def kompile(src, raw=False, filename='<compiler>', **kwargs):
+def kompile(src, raw=False, filename='<compiler>', loader=None, **kwargs):
     '''
     Creates a new class based on the supplied template, and returnsit.
 
@@ -26,7 +26,7 @@ def kompile(src, raw=False, filename='<compiler>', **kwargs):
 
     '''
 
-    parser = Parser(src)
+    parser = Parser(src, loader=loader)
     parser.load_library('knights.tags')
     parser.load_library('knights.helpers')
 

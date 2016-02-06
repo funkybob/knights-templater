@@ -1,6 +1,8 @@
+import pathlib
 import unittest
 
-from knights import compiler
+
+from knights import compiler, loader
 
 
 class Mock(object):
@@ -10,10 +12,15 @@ class Mock(object):
 
 
 class TemplateTestCase(unittest.TestCase):
+    @classmethod
+    def setUpClass(cls):
+        cls.loader = loader.TemplateLoader([
+            pathlib.Path(__file__).parent / 'templates',
+        ])
 
     def assertRendered(self, source, expected, context=None):
         try:
-            tmpl = compiler.kompile(source)
+            tmpl = compiler.kompile(source, loader=self.loader)
             rendered = tmpl({} if context is None else context)
             self.assertEqual(rendered, expected)
         except Exception as e:

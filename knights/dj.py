@@ -5,7 +5,8 @@ from django.template.backends.utils import csrf_input_lazy, csrf_token_lazy
 from django.template.base import (TemplateDoesNotExist,  # NOQA
                                   TemplateSyntaxError)
 
-from . import compiler, loader
+from .compiler import kompile
+from .loader import TemplateLoader, TemplateNotFound
 
 
 class KnightsTemplater(BaseEngine):
@@ -15,17 +16,16 @@ class KnightsTemplater(BaseEngine):
 
         super(KnightsTemplater, self).__init__(params)
 
-        for path in self.template_dirs:
-            loader.add_path(path)
+        self.loader = TemplateLoader(self.template_dirs)
 
     def from_string(self, template_code):
-        tmpl = compiler.kompile(template_code)
+        tmpl = kompile(template_code, loader=self.loader)
         return Template(tmpl)
 
     def get_template(self, template_name):
         try:
-            tmpl = loader.load_template(template_name)
-        except loader.TemplateNotFound:
+            tmpl = self.loader[template_name]
+        except TemplateNotFound:
             raise TemplateDoesNotExist(template_name)
         except Exception as e:
             raise TemplateSyntaxError(e).with_traceback(e.__traceback__)

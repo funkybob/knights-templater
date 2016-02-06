@@ -1,5 +1,5 @@
 
-import os.path
+import pathlib
 
 from .compiler import kompile
 
@@ -10,29 +10,28 @@ class TemplateNotFound(Exception):
     pass
 
 
-def add_path(path):
-    path = os.path.abspath(path)
+class TemplateLoader(dict):
+    def __init__(self, paths):
+        self.paths = [
+            (pathlib.Path.cwd() / path).resolve()
+            for path in paths
+        ]
 
-    if path not in PATHS:
-        PATHS.append(path)
+    def load(self, name, raw=False):
+        for path in self.paths:
+            full_path = path / name
+            try:
+                full_path.relative_to(path)
+            except ValueError:
+                # XXX Raise Suspicious Op?
+                continue
+            if full_path.exists() and full_path.is_file():
+                with full_path.open(encoding='utf-8') as fin:
+                    src = fin.read()
 
-
-def load_template(name, paths=None, raw=False):
-    if paths is None:
-        paths = PATHS[:]
-    else:
-        paths = [os.path.abspath(path) for path in paths]
-
-    for path in paths:
-        full_name = os.path.abspath(os.path.join(path, name))
-        if not full_name.startswith(path):
-            continue
-        try:
-            with open(full_name, encoding='utf-8') as fin:
-                src = fin.read()
-
-            return kompile(src, raw=raw, filename=full_name)
-        except FileNotFoundError:
-            pass
-    else:
+                return kompile(src, raw=raw, filename=str(full_path), loader=self)
         raise TemplateNotFound(name)
+
+    def __missing__(self, key):
+        self[key] = tmpl = self.load(key)
+        return tmpl

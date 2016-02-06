@@ -1,4 +1,5 @@
-import os
+
+import pathlib
 
 from .utils import TemplateTestCase, Mock
 
@@ -83,9 +84,6 @@ class WithTagTest(TemplateTestCase):
 
 
 class IncludeTagTest(TemplateTestCase):
-    def setUp(self):
-        from knights import loader
-        loader.add_path(os.path.join(os.path.dirname(__file__), 'templates/'))
 
     def test_include(self):
         self.assertRendered(

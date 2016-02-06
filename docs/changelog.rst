@@ -1,6 +1,13 @@
 1.3 (2015-??-??)
 ----------------
 
+Features:
+
+- Replaced `loader.load_template` with `loader.TemplateLoader`
+
+  All templates that need to load templates [`extends`, `include`, etc] MUST
+  now have a loader passed to their Parser.
+
 Fixes:
 
 - Don't resolve builtins via the context

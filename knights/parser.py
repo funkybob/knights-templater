@@ -27,7 +27,8 @@ visitor = VarVisitor()
 
 
 class Parser:
-    def __init__(self, src):
+    def __init__(self, src, loader):
+        self.loader = loader
         self.stream = tokenise(src)
         self.parent = None
         self.methods = []

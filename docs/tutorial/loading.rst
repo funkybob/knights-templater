@@ -1,18 +1,28 @@
 Loading Templates
 =================
 
-Templates can be loaded from files.  The loader needs a file name, and a list of directories to search for it.
+Templates can be loaded from files.  The ``loader.TemplateLoader`` class makes
+it easy to access a list of directories for templates.
+
+First you need to create a ``TemplateLoader``
 
 .. code-block:: python
 
-   >>> from knights import loader
-   >>> t = loader.load_template('index.html', ['.'])
+   >>> from knights.loader import TemplateLoader
+   >>> loader = TemplateLoader(['templates'])
 
-If your application has a set of known template dirs, you can add them to the search path, and omit the list from load_template:
+The list of paths provided will be resolved relative to the CWD.
+
+Now you can ask the loader to find a template in any of the supplied
+directories:
 
 .. code-block:: python
 
-   >>> from knights import loader
-   >>> loader.add_path('.')
-   >>> t = loader.load_template('index.html')
+   >>> t = loader.load('index.html')
 
+Additionally, the loader will act as a cache if used like a dict:
+
+.. code-block:: python
+
+   >>> t = loader['index.html']  # Will load and parse the class
+   >>> s = loader['index.html']  # Will reuse the existing instance

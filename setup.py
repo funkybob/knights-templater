@@ -3,7 +3,7 @@ from setuptools import setup
 
 setup(
     name='knights-templater',
-    version='1.2',
+    version='1.3',
     packages=[
         'knights',
         'knights.compat',

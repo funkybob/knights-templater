@@ -7,9 +7,16 @@ Parser
 The Parser processes the Token stream from the `lexer` and produces a Template
 class.
 
-.. py:class:: Parser(source)
+.. py:class:: Parser(source, loader)
 
    Used to parse token streams and produce a template class.
+
+   .. py:attribute:: loader
+
+      The ``loader.TemplateLoader`` instance for this parser to use, or None.
+      This value is passed via the ``compiler.kompile`` call from the
+      ``loader.TempateLoader``, and is required for the ``{% extends %}`` and
+      ``{% include %}`` tags to work.
 
    .. py:attribute:: stream
 

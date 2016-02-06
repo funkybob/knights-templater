@@ -8,7 +8,7 @@ Contains the main compilation function for driving template construction.
 To avoid clashing with the built-in `compile` this method is called `kompile`.
 
 
-.. py:function:: kompile(source, raw=False)
+.. py:function:: kompile(source, raw=False, filename='<compiler>', loader=None, **kwargs):)
 
    Compiles a template from the provided source string.
 

@@ -21,12 +21,12 @@ https://bitbucket.org/funkybob/helloworld
 
 Using Python 3.5.1 on Debian
 
-- Django (1.9.5)
+- Django (1.10.0)
 - Jinja2 (2.8)
 - knights-templater (1.3)
 - Mako (1.0.4)
 - Tenjin (1.1.1)
-- tornado (4.3)
+- tornado (4.4.1)
 - wheezy.html (0.1.147)
 - wheezy.template (0.1.167)
 
@@ -36,83 +36,83 @@ Legend:
     tcalls: total function calls
     funcs : distinct functions called
 
-Performed on my old Core2Duo E8500:
+Performed on my i5-4200U laptop:
 
     len(items) == 0
 
     01-initial         msec    rps  tcalls  funcs
-    django            13226   7561     171     55
-    jinja2             2684  37257      29     23
-    knights             701 142644      20      9
-    mako               6138  16291      48     36
-    tenjin             1839  54391      34     23
-    tornado            2096  47709      36     20
-    wheezy.template     296 338407      15      9
+    django             4708  21241     165     56
+    jinja2              872 114683      29     23
+    knights             309 324025      20      9
+    mako               2147  46570      48     36
+    tenjin              668 149752      34     23
+    tornado             929 107640      45     24
+    wheezy.template     143 697091      15      9
 
     02-include         msec    rps  tcalls  funcs
-    django            35133   2846     430     72
-    jinja2            32744   3054     201     54
-    knights            1933  51726      43     17
-    mako              23634   4231     154     51
-    tenjin             6473  15449      99     29
-    tornado            2137  46804      43     20
-    wheezy.template     668 149604      30     14
+    django            13309   7514     432     71
+    jinja2            12401   8064     201     54
+    knights             866 115519      43     17
+    mako               9006  11104     154     51
+    tenjin             2387  41886      99     29
+    tornado             951 105182      52     24
+    wheezy.template     296 337269      30     14
 
     03-extends         msec    rps  tcalls  funcs
-    django            54128   1847     682     89
-    jinja2            37533   2664     273     59
-    knights            2424  41248      57     20
-    mako              34599   2890     230     65
-    tenjin             9829  10174     148     40
-    tornado            2266  44134      48     20
-    wheezy.template    1240  80674      48     19
+    django            22127   4519     685     88
+    jinja2            15609   6407     273     59
+    knights            1049  95298      57     20
+    mako              13611   7347     230     65
+    tenjin             3563  28067     130     37
+    tornado             993 100713      57     24
+    wheezy.template     527 189705      48     19
 
     04-outer           msec    rps  tcalls  funcs
-    django            54136   1847     682     89
-    jinja2            38920   2569     273     59
-    knights            2473  40433      57     20
-    mako              35532   2814     233     65
-    tenjin             9899  10102     148     40
-    tornado            2247  44498      48     20
-    wheezy.template    1261  79272      48     19
+    django            22180   4509     685     88
+    jinja2            15474   6462     273     59
+    knights            1053  94965      57     20
+    mako              14100   7092     233     65
+    tenjin             3523  28389     130     37
+    tornado             991 100932      57     24
+    wheezy.template     534 187185      48     19
 
     len(items) == 10
 
     01-initial         msec    rps  tcalls  funcs
-    django            85435   1170    1237     59
-    jinja2             8528  11726     120     23
-    knights            5696  17557     143     14
-    mako              10660   9381     137     36
-    tenjin             4492  22264     103     23
-    tornado            7041  14202     227     20
-    wheezy.template    1188  84155      74      9
+    django            30390   3291    1171     61
+    jinja2             3350  29851     120     23
+    knights            2746  36417     143     14
+    mako               4040  24752     137     36
+    tenjin             2122  47115     103     23
+    tornado            3211  31139     236     24
+    wheezy.template     568 176015      74      9
 
     02-include         msec    rps  tcalls  funcs
-    django           106752    937    1496     75
-    jinja2            33734   2964     292     54
-    knights            6603  15146     166     22
-    mako              28664   3489     243     51
-    tenjin             9312  10739     168     29
-    tornado            6999  14287     234     20
-    wheezy.template    1579  63314      89     14
+    django            39864   2509    1438     75
+    jinja2            15426   6482     292     54
+    knights            3276  30527     166     22
+    mako              10741   9310     243     51
+    tenjin             3871  25836     168     29
+    tornado            3272  30559     243     24
+    wheezy.template     731 136849      89     14
 
     03-extends         msec    rps  tcalls  funcs
-    django           129641    771    1748     92
-    jinja2            45724   2187     386     59
-    knights            7772  12867     229     25
-    mako              39965   2502     319     65
-    tenjin            12185   8207     199     37
-    tornado            6787  14735     239     20
-    wheezy.template    2112  47340     107     19
+    django            50971   1962    1691     92
+    jinja2            18643   5364     386     59
+    knights            3687  27122     229     25
+    mako              15925   6279     319     65
+    tenjin             5154  19402     199     37
+    tornado            3306  30252     248     24
+    wheezy.template     985 101494     107     19
 
     04-outer           msec    rps  tcalls  funcs
-    django           155362    644    2228     92
-    jinja2            44932   2226     427     59
-    knights           11172   8951     339     25
-    mako              43095   2320     382     65
-    tenjin            14834   6741     277     40
-    tornado           10311   9699     349     20
-    wheezy.template    2642  37849     137     19
+    django            62058   1611    2183     96
+    jinja2            20227   4944     427     59
+    knights            5453  18338     339     25
+    mako              17872   5595     382     65
+    tenjin             6154  16251     259     37
+    tornado            4859  20582     358     24
+    wheezy.template    1310  76312     137     19
 
 
 * Note: wheezy.html has a C-optimised version of escape().

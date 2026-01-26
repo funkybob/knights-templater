@@ -57,6 +57,14 @@ Load a template from a directory:
    >>> tmpl({....})
    ...
 
+Shortcut to parse and render immediately:
+
+.. code-block:: python
+
+   >>> from knights import render
+   >>> result = render('Hello! My name is {{ name }}.', {'name': 'Inigo Montoya'})
+
+
 Since WSGI wants an iterable for its content:
 
 .. code-block:: python

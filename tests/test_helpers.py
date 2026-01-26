@@ -1,19 +1,19 @@
+from knights import render
 
-from .utils import TemplateTestCase
 
-
-class HelpersTestCase(TemplateTestCase):
-
+class TestHelpers:
     def test_escape_html(self):
-        self.assertRendered(
-            '''{{ _.escape("foo & bar") }}''',
-            '''foo &amp; bar''',
-            {},
-        )
+        result = render("""{{ _.escape("foo & bar") }}""")
+        assert result == 'foo &amp; bar'
 
     def test_escape_js(self):
-        self.assertRendered(
-            '''{{ _.escape('=', 'js') }}''',
-            '''\\u003D''',
-            {},
-        )
+        result = render("""{{ _.escape('=', 'js') }}""")
+        assert result == '\\u003D'
+
+    def test_add_slashes(self):
+        result = render("""{{ _.addslashes(val) }}""", {'val': r'\test'})
+        assert result ==  r"\\test"
+    
+    def test_capfirst(self):
+        result = render('{{ _.capfirst(name) }}', {'name': 'bob down'})
+        assert result == 'Bob down'

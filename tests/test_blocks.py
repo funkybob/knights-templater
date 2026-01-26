@@ -1,121 +1,112 @@
+from types import SimpleNamespace
 
-import pathlib
+import pytest
 
-from .utils import TemplateTestCase, Mock
-
-
-class BlockTagTest(TemplateTestCase):
-
-    def test_block_parse(self):
-        self.assertRendered('{% block name %}%{% endblock %}', '%')
+from knights import render
 
 
-class ForTagTest(TemplateTestCase):
-    def test_simple_for(self):
-        self.assertRendered(
-            '{% for item in seq %}{{ item }} {% endfor %}',
-            'a b c d e ',
-            {'seq': 'abcde'},
-        )
-
-    def test_unpack_for(self):
-        self.assertRendered(
-            '{% for a, b in seq %}{{ a }} == {{ b }},{% endfor %}',
-            'a == 1,b == 2,',
-            {'seq': (('a', 1), ('b', 2))}
-        )
-
-    def test_for_empty_false(self):
-        self.assertRendered(
-            '{% for a, b in seq %}{{ a }} == {{ b }},{% empty %}empty{% endfor %}',
-            'a == 1,b == 2,',
-            {'seq': (('a', 1), ('b', 2))},
-        )
-
-    def test_for_empty_true(self):
-        self.assertRendered(
-            '{% for a, b in seq %}{{ a }} == {{ b }},{% empty %}empty{% endfor %}',
-            'empty',
-            {'seq': ()},
-        )
-
-    def test_scope(self):
-        self.assertRendered(
-            '{% for a in seq %}{{ a * b }} {% endfor %}',
-            '2 4 6 ',
-            {'seq': (1, 2, 3), 'b': 2},
-        )
-
-    def test_attr_source(self):
-        self.assertRendered(
-            '{% for a in obj.seq %}{{ a }}{% endfor %}',
-            '1234',
-            {'obj': Mock(seq=[1, 2, 3, 4])},
-        )
+class TestBlockTag:
+    def test_parse(self):
+        result = render('{% block name %}%{% endblock %}')
+        assert result == '%'
 
 
-class IfTagTest(TemplateTestCase):
-    def test_simple_if(self):
-        self.assertRendered(
-            '{% if a == 1 %}Yes!{% endif %}',
-            'Yes!',
-            {'a': 1}
-        )
+class TestForTag:
+    @pytest.mark.parametrize(
+        ('source', 'expected', 'context'),
+        [
+            # Simple for block
+            (
+                '{% for item in seq %}{{ item }} {% endfor %}',
+                'a b c d e ',
+                {'seq': 'abcde'},
+            ),
+            # Unpack item
+            (
+                '{% for a, b in seq %}{{ a }} == {{ b }},{% endfor %}',
+                'a == 1,b == 2,',
+                {'seq': (('a', 1), ('b', 2))},
+            ),
+            # Ignore empty block
+            (
+                '{% for a, b in seq %}{{ a }} == {{ b }},{% empty %}empty{% endfor %}',
+                'a == 1,b == 2,',
+                {'seq': (('a', 1), ('b', 2))},
+            ),
+            # Renders empty block
+            (
+                '{% for a, b in seq %}{{ a }} == {{ b }},{% empty %}empty{% endfor %}',
+                'empty',
+                {'seq': ()},
+            ),
+            # Scope climbing
+            (
+                '{% for a in seq %}{{ a * b }} {% endfor %}',
+                '2 4 6 ',
+                {'seq': (1, 2, 3), 'b': 2},
+            ),
+            # Attribute lookup on source
+            (
+                '{% for a in obj.seq %}{{ a }}{% endfor %}',
+                '1234',
+                {'obj': SimpleNamespace(seq=[1, 2, 3, 4])},
+            ),
+        ],
+    )
+    def test_for_tag(self, source, expected, context):
+        result = render(source, context)
+        assert result == expected
 
-        self.assertRendered(
-            '{% if a == 1 %}Yes!{% endif %}',
-            '',
-            {'a': 2}
-        )
 
-    def test_if_else(self):
-        tmpl = '{% if a == 1 %}Yes!{% else %}No!{% endif %}'
-        self.assertRendered(tmpl, 'Yes!', {'a': 1})
-        self.assertRendered(tmpl, 'No!', {'a': 2})
+class TestIfTag:
+    @pytest.mark.parametrize(
+        ('context', 'expected'),
+        [
+            ({'a': 1}, 'Yes!'),
+            ({'a': 2}, ''),
+        ],
+    )
+    def test_simple_if_true(self, context, expected):
+        result = render('{% if a == 1 %}Yes!{% endif %}', context)
+        assert result == expected
+
+    @pytest.mark.parametrize(
+        ('context', 'expected'),
+        [
+            ({'a': 1}, 'Yes!'),
+            ({'a': 2}, 'No!'),
+        ],
+    )
+    def test_if_else(self, context, expected):
+        result = render('{% if a == 1 %}Yes!{% else %}No!{% endif %}', context)
+        assert result == expected
 
 
-class WithTagTest(TemplateTestCase):
+class TestWithTag:
     def test_simple_with(self):
-        self.assertRendered(
-            '''{% with a=1, b=c %}{{ a * b }}{% endwith %}''',
-            '''3''',
-            {'c': 3}
-        )
+        result = render('{% with a=1, b=c %}{{ a * b }}{% endwith %}', {'c': 3})
+        assert result == '3'
 
 
-class IncludeTagTest(TemplateTestCase):
+class TestIncludeTag:
+    def test_include(self, test_loader):
+        result = render("""{% include "include.html" %}""", loader=test_loader)
+        assert result == 'included\n'
 
-    def test_include(self):
-        self.assertRendered(
-            '''{% include "include.html" %}''',
-            '''included\n''',
-            {}
-        )
-
-    def test_include_with(self):
-        self.assertRendered(
-            '''{% include "include_more.html", a=val, b=6 %}''',
-            '''product: 18\n''',
-            {'val': 3}
-        )
+    def test_include_with(self, test_loader):
+        result = render("""{% include "include_more.html", a=val, b=6 %}""", {'val': 3}, loader=test_loader)
+        assert result == 'product: 18\n'
 
 
-class MacroTagTest(TemplateTestCase):
-
+class TestMacroTagTest:
     def test_macro_does_not_render(self):
-        self.assertRendered(
-            '''{% macro foo %}Foo{% endmacro %}''',
-            '',
-        )
+        result = render("""{% macro foo %}Foo{% endmacro %}""")
+        assert result == ''
 
     def test_macro_renders(self):
-        self.assertRendered(
-            '''{% macro foo %}Foo{% endmacro %}{% use "foo" %}''',
-            'Foo',
-        )
+        result = render("""{% macro foo %}Foo{% endmacro %}{% use "foo" %}""")
+        assert result == 'Foo'
 
     def test_macro_takes_args(self):
-        self.assertRendered(
-            '''{% macro foo %}{{ foo }}{% endmacro %}{% use "foo", foo="bar" %}''',
-            '''bar''',
-        )
+        result = render("""{% macro foo %}{{ foo }}{% endmacro %}{% use "foo", foo="bar" %}""")
+        assert result == """bar"""

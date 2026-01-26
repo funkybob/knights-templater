@@ -1,33 +1,25 @@
-
-import pathlib
-
-from .utils import TemplateTestCase
-
-
-class InheritanceTestCase(TemplateTestCase):
-
-    def test_simple(self):
-        '''
+class TestInheritance:
+    def test_simple(self, test_loader):
+        """
         Test that we can inherit.
-        '''
-        t = self.loader.load('inherit_simple.html')
-        output = t({})
-        self.assertEqual(output, 'parent\n\n')
+        """
+        t = test_loader.load('inherit_simple.html')
+        result = t({})
+        assert result == 'parent\n\n'
 
-    def test_override_block(self):
-        t = self.loader.load('inherit_override.html')
-        output = t({})
-        self.assertEqual(output, 'parent\nchild\n')
+    def test_override_block(self, test_loader):
+        t = test_loader.load('inherit_override.html')
+        result = t({})
+        assert result == 'parent\nchild\n'
 
 
-class SuperTestCase(TemplateTestCase):
+class TestSuper:
+    def test_own_super(self, test_loader):
+        t = test_loader.load('super_own.html')
+        result = t({})
+        assert result == 'child of parent\nother parent\n'
 
-    def test_own_super(self):
-        t = self.loader.load('super_own.html')
-        output = t({})
-        self.assertEqual(output, 'child of parent\nother parent\n')
-
-    def test_other_super(self):
-        t = self.loader.load('super_other.html')
-        output = t({})
-        self.assertEqual(output, 'subverting other parent\nother parent\n')
+    def test_other_super(self, test_loader):
+        t = test_loader.load('super_other.html')
+        result = t({})
+        assert result == 'subverting other parent\nother parent\n'

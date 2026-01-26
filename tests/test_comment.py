@@ -1,7 +1,7 @@
-from .utils import TemplateTestCase
+from knights import render
 
 
-class CommentTagText(TemplateTestCase):
-
+class TestCommentTag:
     def test_comment(self):
-        self.assertRendered('{# test #}', '')
+        result = render('{# test #}')
+        assert result == ''

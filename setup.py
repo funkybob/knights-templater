@@ -1,6 +1,5 @@
 from setuptools import setup
 
-
 setup(
     name='knights-templater',
     version='1.3',

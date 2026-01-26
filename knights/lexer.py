@@ -1,38 +1,41 @@
 import re
 from enum import Enum
+from types import GeneratorType
 
-TokenType = Enum('Token', 'comment text var block',)
+TokenType = Enum(
+    'Token',
+    'comment text var block',
+)
 
 
 tag_re = re.compile(
-    '|'.join([
-        r'{%\s*(?P<block>.+?)\s*%}',
-        r'{{\s*(?P<var>.+?)\s*}}',
-        r'{#\s*(?P<comment>.+?)\s*#}'
-    ]),
-    re.DOTALL
+    r"""
+    {%\s*(?P<block>.+?)\s*%} |
+    {{\s*(?P<var>.+?)\s*}} |
+    {\#\s*(?P<comment>.+?)\s*\#}
+    """,
+    re.DOTALL | re.VERBOSE,
 )
 
 
 class Token:
-    __slots__ = ('mode', 'content', 'lineno')
+    __slots__ = ('content', 'lineno', 'mode')
 
-    def __init__(self, mode, content, lineno=None):
+    def __init__(self, mode: TokenType, content: str, lineno: int | None = None) -> None:
         self.mode = mode
         self.content = content
         self.lineno = lineno
 
-    def __repr__(self):
-        return '<Token {}: "{:s}">'.format(self.mode.name, self.content)
+    def __repr__(self) -> str:
+        return f'<Token {self.mode.name}: "{self.content:s}">'  # pragma: no cover
 
 
-def tokenise(template):
-    '''A generator which yields Token instances'''
+def tokenise(template: str) -> GeneratorType[Token]:
+    """A generator which yields Token instances"""
     upto = 0
     lineno = 0
 
     for m in tag_re.finditer(template):
-
         start, end = m.span()
         lineno = template.count('\n', 0, start) + 1  # Humans count from 1
         # If there's a gap between our start and the end of the last match,

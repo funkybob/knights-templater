@@ -1,21 +1,25 @@
 import ast
 import builtins
 from importlib import import_module
+from typing import TYPE_CHECKING
 
 from . import astlib as _a
-from .lexer import TokenType, tokenise
+from .lexer import Token, TokenType, tokenise
+
+if TYPE_CHECKING:
+    from .loader import TemplateLoader
 
 
-def wrap_name_in_context(name):
+def wrap_name_in_context(name: str) -> ast.AST:
     return ast.Subscript(
         value=_a.Name('context'),
-        slice=ast.Index(value=ast.Str(s=name.id)),
+        slice=ast.Index(value=ast.Constant(name.id)),
         ctx=ast.Load(),
     )
 
 
 class VarVisitor(ast.NodeTransformer):
-    def visit_Name(self, node):
+    def visit_Name(self, node: ast.Name) -> ast.AST:
         if hasattr(builtins, node.id):
             return node
         if node.id in {'_', 'self'}:
@@ -27,7 +31,7 @@ visitor = VarVisitor()
 
 
 class Parser:
-    def __init__(self, src, loader):
+    def __init__(self, src: str, loader: 'TemplateLoader') -> None:
         self.loader = loader
         self.stream = tokenise(src)
         self.parent = None
@@ -35,76 +39,76 @@ class Parser:
         self.tags = {}
         self.helpers = {}
 
-    def load_library(self, path):
-        '''
+    def load_library(self, path: str) -> None:
+        """
         Load a template library into the state.
-        '''
+        """
         module = import_module(path)
         self.tags.update(module.register.tags)
         self.helpers.update(module.register.helpers)
 
-    def build_class(self):
+    def build_class(self) -> ast.ClassDef:
         cls = ast.ClassDef(
             name='Template',
-            bases=[
-                _a.Name('parent' if self.parent else 'object')
-            ],
+            bases=[_a.Name('parent' if self.parent else 'object')],
             body=self.methods,
             keywords=[],
-            starargs=None,
-            kwargs=None,
-            decorator_list=[]
+            decorator_list=[],
         )
 
-        cls.body.extend([
-
-            # def _iterator(self, contetxt):
-            #     return map(str, self._root(context))
-            ast.FunctionDef(
-                name='_iterator',
-                args=_a.arguments(_a.args('self', 'context')),
-                body=[
-                    ast.Return(
-                        value=_a.Call(_a.Name('map'), [
-                            _a.Name('str'),
-                            _a.Call(_a.Attribute(_a.Name('self'), '_root'), [
-                                _a.Name('context'),
-                            ]),
-                        ])
-                    )
-                ],
-                decorator_list=[],
-            ),
-
-            # def __call__(self, context):
-            #     return ''.join(map(str, self._root(context)))
-            ast.FunctionDef(
-                name='__call__',
-                args=_a.arguments(_a.args('self', 'context')),
-                body=[
-                    ast.Return(
-                        value=_a.Call(
-                            _a.Attribute(ast.Str(s=''), 'join'),
-                            args=[
-                                _a.Call(_a.Name('map'), [
+        cls.body.extend(
+            [
+                # def _iterator(self, context):
+                #     return map(str, self._root(context))
+                ast.FunctionDef(
+                    name='_iterator',
+                    args=ast.arguments([ast.arg('self'), ast.arg('context')]),
+                    body=[
+                        ast.Return(
+                            value=ast.Call(
+                                _a.Name('map'),
+                                [
                                     _a.Name('str'),
-                                    _a.Call(
+                                    ast.Call(
                                         _a.Attribute(_a.Name('self'), '_root'),
-                                        [_a.Name('context')]
+                                        [_a.Name('context')],
                                     ),
-                                ]),
-                            ],
-                        )
-                    ),
-                ],
-                decorator_list=[],
-            ),
-
-        ])
+                                ],
+                            ),
+                        ),
+                    ],
+                ),
+                # def __call__(self, context):
+                #     return ''.join(map(str, self._root(context)))
+                ast.FunctionDef(
+                    name='__call__',
+                    args=ast.arguments([ast.arg('self'), ast.arg('context')]),
+                    body=[
+                        ast.Return(
+                            value=ast.Call(
+                                _a.Attribute(ast.Constant(''), 'join'),
+                                args=[
+                                    ast.Call(
+                                        _a.Name('map'),
+                                        [
+                                            _a.Name('str'),
+                                            ast.Call(
+                                                _a.Attribute(_a.Name('self'), '_root'),
+                                                [_a.Name('context')],
+                                            ),
+                                        ],
+                                    ),
+                                ],
+                            ),
+                        ),
+                    ],
+                ),
+            ],
+        )
 
         return cls
 
-    def build_method(self, name, endnodes=None):
+    def build_method(self, name: str, endnodes: list[str] | None = None) -> ast.FunctionDef:
         # Build the body
         if endnodes:
             body, _ = self.parse_nodes_until(*endnodes)
@@ -112,12 +116,17 @@ class Parser:
             body = list(self.parse_node())
         # If it's empty include a blank
         if not body:
-            body.append(ast.Expr(value=ast.Yield(value=ast.Str(s=''))))
+            body.append(ast.Expr(value=ast.Yield(value=ast.Constant(''))))
 
         # Create the method
         func = ast.FunctionDef(
             name=name,
-            args=_a.arguments(_a.args('self', 'context')),
+            args=ast.arguments(
+                [
+                    ast.arg('self'),
+                    ast.arg('context'),
+                ],
+            ),
             body=body,
             decorator_list=[],
         )
@@ -126,10 +135,10 @@ class Parser:
 
         return func
 
-    def parse_node(self, endnodes=None):
+    def parse_node(self, endnodes: list[str] | None = None) -> ast.AST:
         for token in self.stream:
             if token.mode == TokenType.text:
-                node = ast.Yield(value=ast.Str(s=token.content))
+                node = ast.Yield(value=ast.Constant(token.content))
             elif token.mode == TokenType.var:
                 code = self.parse_expression(token.content)
                 node = ast.Yield(value=code)
@@ -152,22 +161,19 @@ class Parser:
             node.lineno = token.lineno
             yield node
 
-    def parse_nodes_until(self, *endnodes):
-        '''
-        '''
+    def parse_nodes_until(self, *endnodes: list[str]) -> tuple[tuple[Token], Token]:
+        """ """
         *nodes, end = list(self.parse_node(endnodes=endnodes))
         if end not in endnodes:
-            raise SyntaxError('Did not find end node %r - found %r instead' % (
-                endnodes, end
-            ))
+            raise SyntaxError(f'Did not find end node {endnodes!r} - found {end!r} instead')
         return nodes, end
 
-    def parse_expression(self, expr):
+    def parse_expression(self, expr: str) -> list[ast.AST]:
         code = ast.parse(expr, mode='eval')
         visitor.visit(code)
         return code.body
 
-    def parse_args(self, expr):
-        code = ast.parse('x(%s)' % expr, mode='eval')
+    def parse_args(self, expr: str) -> tuple[ast.arguments, ast.keyword]:
+        code = ast.parse(f'x({expr})', mode='eval')
 
         return code.body.args, code.body.keywords

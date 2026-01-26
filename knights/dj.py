@@ -1,43 +1,44 @@
 from collections import defaultdict
 
+from django.http import HttpRequest
 from django.template.backends.base import BaseEngine
 from django.template.backends.utils import csrf_input_lazy, csrf_token_lazy
-from django.template.base import (TemplateDoesNotExist,  # NOQA
-                                  TemplateSyntaxError)
+from django.template.base import (
+    TemplateDoesNotExist,
+    TemplateSyntaxError,
+)
 
 from .compiler import kompile
 from .loader import TemplateLoader, TemplateNotFound
 
 
 class KnightsTemplater(BaseEngine):
-
-    def __init__(self, params):
+    def __init__(self, params: dict) -> None:
         params = params.copy()
 
-        super(KnightsTemplater, self).__init__(params)
+        super().__init__(params)
 
         self.loader = TemplateLoader(self.template_dirs)
 
-    def from_string(self, template_code):
+    def from_string(self, template_code: str) -> 'Template':
         tmpl = kompile(template_code, loader=self.loader)
         return Template(tmpl)
 
-    def get_template(self, template_name):
+    def get_template(self, template_name: str) -> 'Template':
         try:
             tmpl = self.loader[template_name]
         except TemplateNotFound:
-            raise TemplateDoesNotExist(template_name)
-        except Exception as e:
-            raise TemplateSyntaxError(e).with_traceback(e.__traceback__)
+            raise TemplateDoesNotExist(template_name) from None
+        except Exception as e:  # noqa: BLE001
+            raise TemplateSyntaxError(e).with_traceback(e.__traceback__) from None
         return Template(tmpl)
 
 
-class Template(object):
-
-    def __init__(self, template):
+class Template:
+    def __init__(self, template: str) -> None:
         self.template = template
 
-    def render(self, context=None, request=None):
+    def render(self, context: dict | None = None, request: HttpRequest | None = None) -> str:
         if context is None:
             context = {}
         if request is not None:

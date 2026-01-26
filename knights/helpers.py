@@ -1,33 +1,39 @@
-'''
+"""
 Default helper functions
-'''
-from .escape import escape_html, escape_js
+"""
+from html import escape
+
+from .escape import escape_js
 from .library import Library
 
 register = Library()
 
+_slash_map = str.maketrans({
+    '\\': r'\\',
+    '"': r'\"',
+    "'": r'\'',
+})
 
 @register.helper
-def addslashes(value):
-    return value.replace('\\', '\\\\').replace('"', '\\"').replace("'", "\\'")
+def addslashes(value: str) -> str:
+    return value.translate(_slash_map)
 
 
 @register.helper
-def capfirst(value):
+def capfirst(value: str) -> str:
     return value and value[0].upper() + value[1:]
 
 
 ESCAPES = {
-    'html': escape_html,
+    'html': escape,
     'js': escape_js,
 }
 
 
 @register.helper
-def escape(value, mode='html'):
+def escape(value: str, mode: str = 'html') -> str:
     return ESCAPES[mode](value)
 
 
-# Lambda's have no names
-register.helper(escape_html, name='escape_html')
-register.helper(escape_js, name='escape_js')
+register.helper(escape, name='escape_html')
+register.helper(escape_js)

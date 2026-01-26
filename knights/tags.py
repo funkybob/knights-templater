@@ -1,64 +1,70 @@
-
+# ruff: noqa: S101
 import ast
 
 from . import astlib as _a
+from .lexer import Token
 from .library import Library
-from .parser import visitor
+from .parser import Parser, visitor
 
 register = Library()
 
 
 @register.tag
-def load(parser, token):
-    args, kwargs = parser.parse_args(token)
+def load(parser: Parser, token: Token) -> None:
+    args, _ = parser.parse_args(token)
     assert len(args) == 1, '"load" tag takes only one argument.'
-    assert isinstance(args[0], ast.Str), \
-        'First argument to "load" tag must be a string'
+    assert isinstance(args[0], ast.Constant), 'First argument to "load" tag must be a string'
+    assert isinstance(args[0].value, str), 'First argument to "load" tag must be a string'
 
-    parser.load_library(args[0].s)
+    parser.load_library(args[0].value)
 
 
 @register.tag
-def extends(parser, token):
-
-    args, kwargs = parser.parse_args(token)
+def extends(parser: Parser, token: Token) -> None:
+    args, _ = parser.parse_args(token)
     assert len(args) == 1, '"extends" tag takes only one argument.'
-    assert isinstance(args[0], ast.Str), \
-        'First argument to "extends" tag must be a string'
+    assert isinstance(args[0], ast.Constant), 'First argument to "extends" tag must be a string'
+    assert isinstance(args[0].value, str), 'First argument to "extends" tag must be a string'
 
-    parent = parser.loader.load(args[0].s, raw=True)
+    parent = parser.loader.load(args[0].value, raw=True)
     parser.parent = parent
 
 
 @register.tag
-def block(parser, token):
+def block(parser: Parser, token: Token) -> ast.YieldFrom:
     name = token.strip()
     parser.build_method(name, endnodes=['endblock'])
     return ast.YieldFrom(
-        value=_a.Call(_a.Attribute(_a.Name('self'), name), [
-            _a.Name('context'),
-        ])
+        value=ast.Call(
+            _a.Attribute(_a.Name('self'), name),
+            [
+                _a.Name('context'),
+            ],
+        ),
     )
 
 
 @register.tag(name='super')
-def do_super(parser, token):
-    '''
+def do_super(
+    parser: Parser,  # noqa: ARG001
+    token: Token,
+) -> ast.YieldFrom:
+    """
     Access the parent templates block.
 
     {% super name %}
-    '''
+    """
     name = token.strip()
     return ast.YieldFrom(
-        value=_a.Call(_a.Attribute(_a.Call(_a.Name('super')), name), [
-            # _a.Attribute(_a.Name('context'), 'parent'),
-            _a.Name('context'),
-        ])
+        value=ast.Call(
+            _a.Attribute(ast.Call(_a.Name('super')), name),
+            [_a.Name('context')],
+        ),
     )
 
 
 @register.tag(name='if')
-def do_if(parser, token):
+def do_if(parser: Parser, token: Token) -> ast.If:
     code = parser.parse_expression(token)
 
     nodelist, end = parser.parse_nodes_until('endif', 'else')
@@ -71,40 +77,40 @@ def do_if(parser, token):
     return ast.If(test=code, body=nodelist, orelse=elsenodes)
 
 
-def _create_with_scope(body, kwargs):
-    '''
+def _create_with_scope(body: list[ast.AST], kwargs: dict) -> ast.With:
+    """
     Helper function to wrap a block in a scope stack:
 
     with ContextScope(context, **kwargs) as context:
         ... body ...
-    '''
+    """
     return ast.With(
         items=[
             ast.withitem(
-                context_expr=_a.Call(
+                context_expr=ast.Call(
                     _a.Name('ContextScope'),
                     [_a.Name('context')],
                     keywords=kwargs,
                 ),
-                optional_vars=_a.Name('context', ctx=ast.Store())
+                optional_vars=ast.Name('context', ctx=ast.Store()),
             ),
         ],
         body=body,
     )
 
 
-def _wrap_kwargs(kwargs):
-    '''
+def _wrap_kwargs(kwargs: dict) -> dict:
+    """
     Ensure expressions in keyword arguments are wrapped.
-    '''
+    """
     for kw in kwargs:
         visitor.visit(kw)
     return kwargs
 
 
 @register.tag(name='for')
-def do_for(parser, token):
-    '''
+def do_for(parser: Parser, token: Token) -> ast.AST:
+    """
     {% for a, b, c in iterable %}
 
     {% endfor %}
@@ -122,8 +128,8 @@ def do_for(parser, token):
         { above code }
     else:
         { empty clause }
-    '''
-    code = ast.parse('for %s: pass' % token, mode='exec')
+    """
+    code = ast.parse(f'for {token}: pass', mode='exec')
 
     # Grab the ast.For node
     loop = code.body[0]
@@ -134,21 +140,18 @@ def do_for(parser, token):
     body, end = parser.parse_nodes_until('endfor', 'empty')
 
     # Build a list of target variable names
-    if isinstance(loop.target, ast.Tuple):
+    if isinstance(loop.target, ast.Tuple):  # noqa: SIM108
         targets = [elt.id for elt in loop.target.elts]
     else:
         targets = [loop.target.id]
 
-    kwargs = [
-        ast.keyword(arg=elt, value=_a.Name(elt))
-        for elt in targets
-    ]
+    kwargs = [ast.keyword(arg=elt, value=_a.Name(elt)) for elt in targets]
 
     # Insert our update call at the start of the loop body
-    body.insert(0, ast.Expr(value=_a.Call(
-        _a.Attribute(_a.Name('context'), 'update'),
-        keywords=kwargs
-    )))
+    body.insert(
+        0,
+        ast.Expr(value=ast.Call(_a.Attribute(_a.Name('context'), 'update'), keywords=kwargs)),
+    )
     loop.body = body
 
     node = _create_with_scope([loop], [])
@@ -159,37 +162,34 @@ def do_for(parser, token):
         # else:
         empty, _ = parser.parse_nodes_until('endfor')
 
-        node = ast.If(
-            test=loop.iter,
-            body=[node],
-            orelse=empty
-        )
+        node = ast.If(test=loop.iter, body=[node], orelse=empty)
 
     return node
 
 
 @register.tag(name='include')
-def do_include(parser, token):
+def do_include(parser: Parser, token: Token) -> ast.AST:
     args, kwargs = parser.parse_args(token)
-    assert isinstance(args[0], ast.Str), \
-        'First argument to "include" tag must be a string'
-    template_name = args[0].s
+    assert isinstance(args[0], ast.Constant), 'First argument to "include" tag must be a string'
+    assert isinstance(args[0].value, str), 'First argument to "include" tag must be a string'
+
+    template_name = args[0].value
     tmpl = parser.loader.load(template_name)
 
     parser.helpers.setdefault('_includes', {})[template_name] = tmpl
 
     # yield _._includes[name](context)
     action = ast.Yield(
-        value=_a.Call(
+        value=ast.Call(
             func=ast.Subscript(
                 value=_a.Attribute(_a.Name('_'), '_includes'),
-                slice=ast.Index(value=ast.Str(s=template_name)),
-                ctx=ast.Load()
+                slice=ast.Index(value=ast.Constant(template_name)),
+                ctx=ast.Load(),
             ),
             args=[
                 _a.Name('context'),
-            ]
-        )
+            ],
+        ),
     )
 
     if kwargs:
@@ -200,10 +200,10 @@ def do_include(parser, token):
 
 
 @register.tag(name='with')
-def do_with(parser, token):
+def do_with(parser: Parser, token: Token) -> ast.AST:
     body, _ = parser.parse_nodes_until('endwith')
 
-    args, kwargs = parser.parse_args(token)
+    _, kwargs = parser.parse_args(token)
     # Need to wrap name lookups in kwarg expressions
     kwargs = _wrap_kwargs(kwargs)
     action = _create_with_scope(body, kwargs)
@@ -212,30 +212,34 @@ def do_with(parser, token):
 
 
 @register.tag
-def macro(parser, token):
-    '''
+def macro(parser: Parser, token: Token) -> ast.Yield:
+    """
     Works just like block, but does not render.
-    '''
+    """
     name = token.strip()
     parser.build_method(name, endnodes=['endmacro'])
-    return ast.Yield(value=ast.Str(s=''))
+    return ast.Yield(value=ast.Constant(''))
 
 
 @register.tag
-def use(parser, token):
-    '''
+def use(parser: Parser, token: Token) -> ast.AST:
+    """
     Counterpart to `macro`, lets you render any block/macro in place.
-    '''
+    """
 
     args, kwargs = parser.parse_args(token)
-    assert isinstance(args[0], ast.Str), \
-        'First argument to "include" tag must be a string'
-    name = args[0].s
+    assert isinstance(args[0], ast.Constant), 'First argument to "include" tag must be a string'
+    assert isinstance(args[0].value, str), 'First argument to "include" tag must be a string'
+
+    name = args[0].value
 
     action = ast.YieldFrom(
-        value=_a.Call(_a.Attribute(_a.Name('self'), name), [
-            _a.Name('context'),
-        ])
+        value=ast.Call(
+            _a.Attribute(_a.Name('self'), name),
+            [
+                _a.Name('context'),
+            ],
+        ),
     )
 
     if kwargs:

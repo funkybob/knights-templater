@@ -1,12 +1,12 @@
 import ast
+from types import SimpleNamespace
 
 from .context import ContextScope
 from .parser import Parser
-from .utils import Helpers
 
 
-def kompile(src, raw=False, filename='<compiler>', loader=None, **kwargs):
-    '''
+def kompile(src: str, *, raw: bool = False, filename: str = '<compiler>', loader: dict | None = None) -> object:
+    """
     Creates a new class based on the supplied template, and returnsit.
 
     class Template(object):
@@ -24,7 +24,7 @@ def kompile(src, raw=False, filename='<compiler>', loader=None, **kwargs):
     Blocks create new methods, and add a 'yield from self.{block}(context)' to
     the current function
 
-    '''
+    """
 
     parser = Parser(src, loader=loader)
     parser.load_library('knights.tags')
@@ -34,9 +34,7 @@ def kompile(src, raw=False, filename='<compiler>', loader=None, **kwargs):
 
     if parser.parent:
         # Remove _root from the method list
-        parser.methods = [
-            method for method in parser.methods if method.name != '_root'
-        ]
+        parser.methods = [method for method in parser.methods if method.name != '_root']
 
     klass = parser.build_class()
 
@@ -45,20 +43,21 @@ def kompile(src, raw=False, filename='<compiler>', loader=None, **kwargs):
 
     ast.fix_missing_locations(inst)
 
-    if kwargs.get('astor', False):
-        import astor
-        print(astor.to_source(inst))
+    # Something is giving Name nodes a lineno greater than their end_lineno
+    for node in ast.walk(inst):
+        if hasattr(node, 'lineno'):
+            node.end_lineno = node.lineno
 
     # Compile code to create class
     code = compile(inst, filename=filename, mode='exec', optimize=2)
 
     # Execute it and return the instance
     g = {
-        '_': Helpers(parser.helpers),
+        '_': SimpleNamespace(parser.helpers),
         'parent': parser.parent,
         'ContextScope': ContextScope,
     }
-    eval(code, g)
+    eval(code, g)  # noqa: S307
 
     klass = g['Template']
     if raw:

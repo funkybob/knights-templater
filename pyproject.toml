@@ -1,0 +1,112 @@
+[project]
+name = "knights-templater"
+version = "0.2.0"
+description = "Add your description here"
+readme = "README.md"
+requires-python = ">=3.13"
+dependencies = [
+]
+
+[dependency-groups]
+dev = [
+    "pytest>=9.0.2",
+    "coverage>=7.13.1",
+]
+
+[tool.coverage.run]
+
+branch = true
+source = ['knights/']
+
+
+[tool.ruff]
+
+line-length = 120
+target-version = "py313"
+
+[tool.ruff.lint]
+select = [
+    'A',  # flake8-builtins
+    'AIR',  # Airflow
+    'ANN',  # flake8-annotations
+    'ARG',  # flake8-unused-arguments
+    'ASYNC',  # flake8-async
+    'B',  # flake8-bugbear
+    'BLE',  # flake8-blind-except
+    'C4',  # flake8-comprehensions
+    'C90',  # mccabe
+    'COM',  # flake8-commas
+    # 'CPY',  # flake8-copyright
+    # 'D',  # pydocstyle
+    'DJ',  # flake8-django
+    # 'DOC',  # pydoclint
+    'DTZ',  # flake8-datetimez
+    'E',  #/W pycodestyle
+    'EM',  # flake8-errmsg
+    'ERA',  # eradicate
+    'EXE',  # flake8-executable
+    'F',  # Pyflakes
+    'FA',  # flake8-future-annotations
+    'FAST',  # FastAPI
+    'FBT',  # flake8-boolean-trap
+    'FIX',  # flake8-fixme
+    'FLY',  # flynt
+    'FURB',  # refurb
+    'G',  # flake8-logging-format
+    'I',  # isort
+    'ICN',  # flake8-import-conventions
+    'INP',  # flake8-no-pep420
+    'INT',  # flake8-gettext
+    'ISC',  # flake8-implicit-str-concat
+    'LOG',  # flake8-logging
+    'N',  # pep8-naming
+    'NPY',  # NumPy-specific rules
+    'PD',  # pandas-vet
+    'PERF',  # Perflint
+    'PGH',  # pygrep-hooks
+    'PIE',  # flake8-pie
+    'PL',  # Pylint
+    'PT',  # flake8-pytest-style
+    'PTH',  # flake8-use-pathlib
+    'PYI',  # flake8-pyi
+    'Q',  # flake8-quotes
+    'RET',  # flake8-return
+    'RSE',  # flake8-raise
+    'RUF',  # Ruff-specific rules
+    'S',  # flake8-bandit
+    'SIM',  # flake8-simplify
+    'SLF',  # flake8-self
+    'SLOT',  # flake8-slots
+    'T10',  # flake8-debugger
+    'T20',  # flake8-print
+    'TC',  # flake8-type-checking
+    'TD',  # flake8-todos
+    'TID',  # flake8-tidy-imports
+    'TRY',  # tryceratops
+    'UP',  # pyupgrade
+    'YTT',  # flake8-2020
+]
+
+ignore = [
+    'EM102',  # Exception must not use an f-string
+    'ERA001',  # Commented out code
+    'Q000',  # Single quotes preferred
+    'Q003',  # Single quotes
+    'RET504',  # Unnecessary assignment before return
+    'TRY003',  # Avoid specifying long messages outside the exception class
+]
+
+[tool.ruff.lint.per-file-ignores]
+"tests/**.py" = [
+    'ANN',  # type annotations
+    'S101',  # assert
+]
+
+fixable = ['ALL']
+
+[tool.ruff.lint.isort]
+
+[tool.ruff.format]
+quote-style = 'single'
+
+skip-magic-trailing-comma = false
